@@ -1,18 +1,10 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:card_hero/database.dart';
-import 'package:card_hero/profile_model.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+import '../../menu/navbar.dart';
+
+void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -20,99 +12,21 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: ImagePickerPage(),
+      home: MyHomePage(),
     );
   }
 }
 
-class ImagePickerPage extends StatefulWidget {
-  const ImagePickerPage({Key? key}) : super(key: key);
-
-  @override
-  State<ImagePickerPage> createState() => _ImagePickerPageState();
-}
-
-class _ImagePickerPageState extends State<ImagePickerPage> {
-  Future<String> pickImage() async {
-    var image = await ImagePicker()
-        .pickImage(source: ImageSource.gallery, imageQuality: 45);
-
-    var imageBytes = await image!.readAsBytes();
-
-    print("IMAGE PICKED: ${image.path}");
-
-    String base64Image = base64Encode(imageBytes);
-
-    return base64Image;
-  }
-
-  List<ProfileModel> pList = [];
-
-  String? byte64String;
-
-  @override
-  initState() {
-    DatabaseHelper.getAllProfile();
-
-    super.initState();
-  }
-
+class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: Navbar(),
       appBar: AppBar(
-        title: const Text("Image Pick"),
+        title: Text('Side menu'),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const Text("INPUT IMAGE"),
-            ElevatedButton(
-                onPressed: () async {
-                  byte64String = await pickImage();
-
-                  print("BYTE 64 STRING: $byte64String");
-                },
-                child: const Text("Pick Image")),
-            const SizedBox(
-              height: 30,
-            ),
-            ElevatedButton(
-                onPressed: () async {
-                  await DatabaseHelper.insertProfile(
-                      ProfileModel(name: "Murad", image64bit: byte64String)
-                          .toMap());
-
-                  pList = await DatabaseHelper.getAllProfile();
-                  setState(() {});
-
-                  print(pList[0].id);
-                  print(pList[0].name);
-                  print(pList[0].image64bit);
-                },
-                child: const Text("Save Profile")),
-            Flexible(
-              child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: pList.isNotEmpty ? pList.length : 1,
-                  itemBuilder: (context, index) {
-                    return SizedBox(
-                      height: 300,
-                      width: double.infinity,
-                      child: Card(
-                        color: Colors.black54,
-                        child: pList.isNotEmpty
-                            ? Image.memory(const Base64Decoder()
-                                .convert(pList[index].image64bit!))
-                            : Text("No Profile"),
-                      ),
-                    );
-                  }),
-            ),
-          ],
-        ),
+        child: Text('Side Menu Tutorial'),
       ),
     );
   }
