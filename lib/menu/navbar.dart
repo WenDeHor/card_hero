@@ -3,20 +3,23 @@ import 'package:flutter/material.dart';
 class Navbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    var titleMenuName = 'Side menu';
+    var assetTitleImageName = 'assets/cover.jpg';
+    var textTitleMenuStyle = TextStyle(color: Colors.white, fontSize: 25);
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[
           DrawerHeader(
             child: Text(
-              'Side menu',
-              style: TextStyle(color: Colors.white, fontSize: 25),
+              titleMenuName,
+              style: textTitleMenuStyle,
             ),
             decoration: BoxDecoration(
                 color: Colors.green,
                 image: DecorationImage(
                     fit: BoxFit.fill,
-                    image: AssetImage('assets/cover.jpg'))),
+                    image: AssetImage(assetTitleImageName))),
           ),
           ListTile(
             leading: Icon(Icons.input),
