@@ -1,16 +1,13 @@
-import 'package:flutter/animation.dart';
-import 'package:flutter/material.dart';
-import 'dart:io';
 import 'dart:convert';
-
-//import 'package:flutter/rendering.dart';
+import 'dart:io';
+import 'dart:typed_data';
+import 'package:card_hero/db/user_database.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_flip_card/flutter_flip_card.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:sqflite/sqflite.dart';
 
 import '../../menu/navbar.dart';
-import '../../menu/2_screan.dart';
-import '../db/user_hive_repository.dart';
 import '../model/user_model.dart';
 
 var themeAppColor = Colors.blue[400];
@@ -21,6 +18,8 @@ var changePhotoCard = 'Change photo card';
 var changeDescription = 'Change description';
 var themeSizeButton = const Size.fromHeight(30);
 
+List<User> pList = [];
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -30,29 +29,48 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class HomeScreen extends StatefulWidget  {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen>  {
-//  @override
-//  Scaffold build(BuildContext context)  {
-//    return Scaffold();
-//  }
+class _HomeScreenState extends State<HomeScreen> {
+  late UserDatabase userDatabase;
+  List<User> userssss = [];
+  User user = const User();
 
-  Future<Widget> build2(BuildContext context) async {
+  @override
+  initState() {
+    super.initState();
+    this.userDatabase = UserDatabase();
+    this.userDatabase.getDataBase().whenComplete(() async {
+      _refreshNotes();
+      setState(() {});
+    });
+  }
+  int getIdUser(){
+    return userssss.length;
+  }
+
+  void _refreshNotes() async {
+//    await userDatabase.deleteAll();
+//    await userDatabase.dropTable();
+    final datas = await userDatabase.getAllUsers();
+//    final data = await userDatabase.getUser(1);
+    setState(() {
+      userssss = datas;
+//      user=data;
+      print("+++++++++++++++${userssss.toString()}");
+      print("+++++++++++++++${userssss.length}");
+    });
+
+  }
+
+  @override
+  Widget build(BuildContext context) {
     FlipCardController _cong = FlipCardController();
-    Image image;
-    final _userDataBox = await Hive.openBox<User>('user_box');
-    User? user = _userDataBox.getAt(1);
-    if (_userDataBox.getAt(1)?.imageUrl == null) {
-      image = Image.asset('assets/cover.jpg', fit: BoxFit.cover);
-    } else {
-      image = Image.memory(base64Decode(user!.imageUrl));
-    }
     return Scaffold(
       drawer: Navbar(),
       appBar: AppBar(
@@ -70,13 +88,32 @@ class _HomeScreenState extends State<HomeScreen>  {
               onTapFlipping: true,
               axis: FlipAxis.vertical,
               controller: _cong,
-              frontWidget:buildCardView(450, 300, 60, 50, image),
-              backWidget: buildCardView(450, 300, 60, 50, Image.asset('assets/cover.jpg', fit: BoxFit.cover)),
+              frontWidget: Center(
+                child: SizedBox(
+                  height: 450,
+                  width: 300,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(60),
+                    // Image border
+                    child: SizedBox.fromSize(
+                        size: Size.fromRadius(50), // Image radius
+                        child: userssss.isNotEmpty
+                            ? Image.memory(
+//                            base64.decode(user.image!))
+                                base64.decode(userssss.last.image!))
+                            : Image.asset('assets/cover.jpg',
+                                fit: BoxFit.cover)),
+                  ),
+                ),
+              ),
+//              frontWidget: buildCardView(450, 300, 60, 50, image),
+              backWidget: buildCardView(450, 300, 60, 50,
+                  Image.asset('assets/cover.jpg', fit: BoxFit.cover)),
             ),
 //            Image.asset(image, fit: BoxFit.cover)
             Column(
               children: <Widget>[
-                buildFilledButton(context, changePhotoCard, '/todo'),
+                loadImageButton(context, changePhotoCard),
                 buildFilledButton(context, changeDescription, '/todo')
               ],
             ),
@@ -120,16 +157,24 @@ class _HomeScreenState extends State<HomeScreen>  {
   }
 
   FilledButton loadImageButton(BuildContext context, String name) {
+    String? byte64String;
     return FilledButton(
         onPressed: () async {
-          var image = await ImagePicker()
-              .pickImage(source: ImageSource.gallery, imageQuality: 45);
-          var imageBytes = await image!.readAsBytes();
-          String base64Image = base64Encode(imageBytes);
-          User user = User('1', 'Your name', base64Image);
-
-          final _userDataBox = await Hive.openBox<User>('user_box');
-          _userDataBox.add(user);
+          try {
+            byte64String = await pickImage();
+            if(byte64String!=null){
+              print("BYTE 64 STRING: $byte64String");
+              var user = User(id: "1", name: 'My Name is: Vova', image: byte64String);
+              UserDatabase().insertUser(user);
+              print("USER: ${user.name}");
+              Navigator.pushNamed(context, '/');
+            } else{
+              Navigator.pushNamed(context, '/');
+            }
+          } catch (e) {
+            print("ERROR while picking file.");
+            Navigator.pushNamed(context, '/');
+          }
         },
         style: FilledButton.styleFrom(
           fixedSize: themeSizeButton,
@@ -142,35 +187,13 @@ class _HomeScreenState extends State<HomeScreen>  {
         ));
   }
 
-//  frontWidget: buildCardView(450, 300, 60, 50, 'assets/cover.jpg'),
-//  Future<Center> buildCardView2() async {
-//    Image image;
-//    final _userDataBox = await Hive.openBox<User>('user_box');
-//    User? user = _userDataBox.getAt(1);
-//    if (_userDataBox.getAt(1)?.imageUrl == null) {
-//      image = Image.asset('assets/cover.jpg', fit: BoxFit.cover);
-//    } else {
-//      image = Image.memory(base64Decode(user!.imageUrl));
-//    }
-//
-//    return Center(
-//      child: SizedBox(
-//        height: 450,
-//        width: 300,
-//        child: ClipRRect(
-//          borderRadius: BorderRadius.circular(60), // Image border
-//          child: SizedBox.fromSize(
-//            size: Size.fromRadius(50), // Image radius
-//            child: image,
-//          ),
-//        ),
-//      ),
-//    );
-//  }
-
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-   return build2( context);
+  Future<String> pickImage() async {
+    var image = await ImagePicker()
+        .pickImage(source: ImageSource.gallery, imageQuality: 50);
+    var imageBytes = await image!.readAsBytes();
+    print("IMAGE PICKED: ${image.path}");
+    String base64Image = base64Encode(imageBytes);
+    return base64Image;
   }
+
 }

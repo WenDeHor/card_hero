@@ -1,20 +1,24 @@
-import 'package:hive_flutter/adapters.dart';
-import 'package:hive_generator/hive_generator.dart';
-import 'package:hive/hive.dart';
 
-part 'user_model.g.dart';
-
-//flutter packages pub run build_runner build --delete-conflicting-outputs
-@HiveType(typeId: 1)
 class User {
-  @HiveField(0)
-  String id;
+  final String? id;
+  final String? name;
+  final String? image;
 
-  @HiveField(1)
-  String name;
+  const User({ this.id,  this.name,  this.image});
 
-  @HiveField(2)
-  String imageUrl;
+  factory User.fromMap(Map<String, dynamic> json) =>
+      User(id: json["id"], name: json["name"], image: json["image"]);
 
-  User(this.id, this.name, this.imageUrl);
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'image': image,
+    };
+  }
+
+  @override
+  String toString() {
+    return 'User{id: $id, name: $name, image: ${image?.length}}';
+  }
 }
