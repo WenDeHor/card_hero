@@ -50,7 +50,8 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {});
     });
   }
-  int getIdUser(){
+
+  int getIdUser() {
     return userssss.length;
   }
 
@@ -62,10 +63,9 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       userssss = datas;
 //      user=data;
-      print("+++++++++++++++${userssss.toString()}");
+//      print("+++++++++++++++${userssss.toString()}");
       print("+++++++++++++++${userssss.length}");
     });
-
   }
 
   @override
@@ -157,18 +157,15 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   FilledButton loadImageButton(BuildContext context, String name) {
-    String? byte64String;
+    String byte64String;
     return FilledButton(
         onPressed: () async {
           try {
             byte64String = await pickImage();
-            if(byte64String!=null){
-              print("BYTE 64 STRING: $byte64String");
-              var user = User(id: "1", name: 'My Name is: Vova', image: byte64String);
-              UserDatabase().insertUser(user);
-              print("USER: ${user.name}");
+            if (byte64String.length > 0) {
+              UserDatabase().insertImageIntoUser(byte64String);
               Navigator.pushNamed(context, '/');
-            } else{
+            } else {
               Navigator.pushNamed(context, '/');
             }
           } catch (e) {
@@ -189,11 +186,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<String> pickImage() async {
     var image = await ImagePicker()
-        .pickImage(source: ImageSource.gallery, imageQuality: 50);
+        .pickImage(source: ImageSource.gallery, imageQuality: 30);
     var imageBytes = await image!.readAsBytes();
-    print("IMAGE PICKED: ${image.path}");
     String base64Image = base64Encode(imageBytes);
     return base64Image;
   }
-
 }
