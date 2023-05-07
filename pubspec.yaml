@@ -40,6 +40,8 @@ dependencies:
   sqflite: ^2.2.8+1
   path_provider: ^2.0.11
 
+  step_progress_indicator: ^1.0.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -2,10 +2,12 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:card_hero/db/user_database.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_flip_card/flutter_flip_card.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:step_progress_indicator/step_progress_indicator.dart';
 
 import '../../menu/navbar.dart';
 import '../model/user_model.dart';
@@ -82,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
         margin: themeMargin,
         padding: themePadding,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             FlipCard(
               rotateSide: RotateSide.bottom,
@@ -92,9 +94,9 @@ class _HomeScreenState extends State<HomeScreen> {
               frontWidget: Center(
                 child: SizedBox(
                   height: 450,
-                  width: 300,
+                  width: 280,
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(60),
+                    borderRadius: BorderRadius.circular(0),
                     // Image border
                     child: SizedBox.fromSize(
                         size: Size.fromRadius(50),
@@ -108,13 +110,43 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               ),
-              backWidget: buildCardView(450, 300, 60, 50,
+              backWidget: buildCardView(450, 280, 0, 50,
                   Image.asset('assets/cover.jpg', fit: BoxFit.cover)),
+            ),
+//            Container(
+//              height: 20,
+//              width: 30,
+//              color: Colors.red,
+//            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                StepProgressIndicator(
+                  totalSteps: 100,
+                  currentStep: 10,
+                  size: 20,
+                  padding: 0,
+                  selectedColor: Colors.yellow,
+                  unselectedColor: Colors.green,
+                  roundedEdges: Radius.circular(10),
+                  selectedGradientColor: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [Colors.yellow, Colors.green],
+                  ),
+                  unselectedGradientColor: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [Colors.grey, Colors.white70],
+                  ),
+                ),
+              ],
             ),
             Column(
               children: <Widget>[
                 loadImageButton(context, changePhotoCard),
-                buildFilledButton(context, changeDescription, '/todo')
+                buildFilledButton(context, changeDescription, '/description')
               ],
             ),
           ],
