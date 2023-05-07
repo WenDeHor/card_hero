@@ -14,6 +14,10 @@ var themeAppColor = Colors.blue[400];
 var themeMargin = const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0);
 var themePadding = const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0);
 
+var themeTextCardColor = Colors.white;
+var themeTextFont = FontWeight.bold;
+var themeTextSize = 22.0;
+
 var changePhotoCard = 'Change photo card';
 var changeDescription = 'Change description';
 var themeSizeButton = const Size.fromHeight(30);
@@ -93,21 +97,20 @@ class _HomeScreenState extends State<HomeScreen> {
                     borderRadius: BorderRadius.circular(60),
                     // Image border
                     child: SizedBox.fromSize(
-                        size: Size.fromRadius(50), // Image radius
-                        child: userssss.isNotEmpty
-                            ? Image.memory(
-//                            base64.decode(user.image!))
-                                base64.decode(userssss.last.image!))
-                            : Image.asset('assets/cover.jpg',
-                                fit: BoxFit.cover)),
+                        size: Size.fromRadius(50),
+                        child: Stack(
+                            alignment: Alignment.bottomCenter,
+                            children: <Widget>[
+                              getImage(userssss),
+                              getName(userssss)
+                            ])), // Image radius
+//                        child:  getImage(userssss)),
                   ),
                 ),
               ),
-//              frontWidget: buildCardView(450, 300, 60, 50, image),
               backWidget: buildCardView(450, 300, 60, 50,
                   Image.asset('assets/cover.jpg', fit: BoxFit.cover)),
             ),
-//            Image.asset(image, fit: BoxFit.cover)
             Column(
               children: <Widget>[
                 loadImageButton(context, changePhotoCard),
@@ -118,6 +121,33 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+
+  Image getImage(List userssss) {
+    if (userssss.isNotEmpty) {
+      return Image.memory(base64.decode(userssss.last.image!));
+    } else {
+      return Image.asset('assets/cover.jpg', fit: BoxFit.cover);
+    }
+  }
+
+  Text getName(List userssss) {
+    if (userssss.isNotEmpty) {
+      if (userssss.last.name == null) {
+        return getText('Enter your name');
+      } else {
+        return getText(userssss.last.name);
+      }
+    }
+    return Text('Enter your name');
+  }
+
+  Text getText(String text) {
+    return Text(text,
+        style: TextStyle(
+            color: themeTextCardColor,
+            fontWeight: themeTextFont,
+            fontSize: themeTextSize));
   }
 
   Center buildCardView(double height, double width, double radiusBorder,
