@@ -56,14 +56,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _refreshNotes() async {
-//    await userDatabase.deleteAll();
-//    await userDatabase.dropTable();
     final datas = await userDatabase.getAllUsers();
-//    final data = await userDatabase.getUser(1);
     setState(() {
       userssss = datas;
 //      user=data;
-//      print("+++++++++++++++${userssss.toString()}");
+      print("+++++++++++++++${userssss.toString()}");
       print("+++++++++++++++${userssss.length}");
     });
   }
@@ -163,11 +160,9 @@ class _HomeScreenState extends State<HomeScreen> {
           try {
             byte64String = await pickImage();
             if (byte64String.length > 0) {
-              UserDatabase().insertImageIntoUser(byte64String);
-              Navigator.pushNamed(context, '/');
-            } else {
-              Navigator.pushNamed(context, '/');
+              UserDatabase().insertOrUpdateImageInUser(byte64String);
             }
+            Navigator.pushNamed(context, '/');
           } catch (e) {
             print("ERROR while picking file.");
             Navigator.pushNamed(context, '/');

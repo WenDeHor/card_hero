@@ -6,44 +6,38 @@ import '../../model/user_model.dart';
 import 'dart:async';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
-import 'package:sqflite/sqflite.dart' as sql;
 
 class UserDatabase {
   final String tableName = 'users';
+  final String userDB = 'UserDatabase.db';
 
   Future<Database> getDataBase() async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path, "UserDatabase.db");
-
+    String path = join(documentsDirectory.path, userDB);
     return openDatabase(
       path,
-      version: 1,
+      version: 2,
       onOpen: (db) {},
       onCreate: (Database db, int version) async {
         await db.execute(
-          "CREATE TABLE $tableName (id TEXT, name TEXT, image TEXT)",
+          "CREATE TABLE $tableName (id TEXT, name TEXT, image TEXT, description TEXT)",
         );
       },
     );
   }
 
-  Future<int> insertImageIntoUser(String image) async {
-    int result = 0;
+  Future<void> insertOrUpdateImageInUser(String image) async {
     Database db = await getDataBase();
-//    int? count = Sqflite.firstIntValue(
-//        await db.rawQuery("SELECT COUNT(*) FROM $tableName"));
-//    if (count != null && count >= 1) {
-//      db.rawDelete("DELETE FROM $tableName WHERE id = 1");
-//      db.rawUpdate("UPDATE $tableName SET image = $image WHERE id = 2");
-//    } else {
-//      db.rawDelete("DELETE FROM $tableName WHERE id = 1");
-    final data = {'id': '1', 'name': 'vova', 'image': image};
-    final id = await db.insert('users', data,
-        conflictAlgorithm: sql.ConflictAlgorithm.replace);
-//      result = await db.rawInsert(
-//          "INSERT INTO $tableName (id, name, image) VALUES ('2', 'vova', '$image')");
-//    }
-    return id;
+    int? count = Sqflite.firstIntValue(
+        await db.rawQuery("SELECT COUNT(*) FROM $tableName"));
+    if (count != null && count >= 1) {
+//      db.rawDelete("DELETE FROM $tableName");
+      await db
+          .rawUpdate("UPDATE $tableName SET image = '$image' WHERE id='user'");
+    } else {
+      await db.rawInsert(
+          "INSERT INTO $tableName (id, image) VALUES ('user', '$image')");
+    }
   }
 
   Future<List<User>> getAllUsers() async {
@@ -53,7 +47,8 @@ class UserDatabase {
       return User(
           id: usersMaps[index]["id"],
           name: usersMaps[index]["name"],
-          image: usersMaps[index]["image"]);
+          image: usersMaps[index]["image"],
+          description: usersMaps[index]["description"]);
     });
   }
 
