@@ -4,7 +4,7 @@ import 'menu/2_screan.dart';
 
 void main() async {
   runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
+    debugShowCheckedModeBanner: true,
     theme: ThemeData(primaryColor: Colors.white70),
     initialRoute: '/',
     routes: {

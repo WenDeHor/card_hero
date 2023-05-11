@@ -1,30 +1,35 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+
 import 'package:card_hero/db/user_database.dart';
+import 'package:card_hero/utils/build_card_view.dart';
+import 'package:card_hero/utils/constants.dart';
+import 'package:card_hero/utils/progress_indicator.dart';
+import 'package:card_hero/menu/navbar.dart';
+import 'package:card_hero/model/user_model.dart';
+import 'package:card_hero/utils/buttons_utils.dart';
+import 'package:card_hero/utils/image_and_name_from_list_user.dart';
+
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_flip_card/flutter_flip_card.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:step_progress_indicator/step_progress_indicator.dart';
 
-import '../../menu/navbar.dart';
-import '../model/user_model.dart';
+ImageAndNameFromListUser imageAndNameFromListUser = ImageAndNameFromListUser();
+ProgressIndicatorUtils progressIndicator = ProgressIndicatorUtils();
+ButtonsUtils buttonsUtils = ButtonsUtils();
+BuildCardView buildCardView = BuildCardView();
 
-var themeAppColor = Colors.blue[400];
-var themeMargin = const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0);
-var themePadding = const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0);
-
-var themeTextCardColor = Colors.white;
-var themeTextFont = FontWeight.bold;
-var themeTextSize = 22.0;
-
-var changePhotoCard = 'Change photo card';
-var changeDescription = 'Change description';
-var themeSizeButton = const Size.fromHeight(30);
+FlipCardController _cong = FlipCardController();
+var counter = 0;
+var durarion = 500;
+User user = User();
 
 List<User> pList = [];
+List<User> userssss = [];
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -44,12 +49,13 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late UserDatabase userDatabase;
-  List<User> userssss = [];
-  User user = const User();
+
+//  List<User> userssss = [];
 
   @override
   initState() {
     super.initState();
+    print("+++++++++++++++initState++++++++++++++}");
     this.userDatabase = UserDatabase();
     this.userDatabase.getDataBase().whenComplete(() async {
       _refreshNotes();
@@ -65,7 +71,9 @@ class _HomeScreenState extends State<HomeScreen> {
     final datas = await userDatabase.getAllUsers();
     setState(() {
       userssss = datas;
-//      user=data;
+      if (datas.length > 0) {
+        user = datas.last;
+      }
       print("+++++++++++++++${userssss.toString()}");
       print("+++++++++++++++${userssss.length}");
     });
@@ -73,7 +81,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    FlipCardController _cong = FlipCardController();
     return Scaffold(
       drawer: Navbar(),
       appBar: AppBar(
@@ -83,70 +90,49 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Container(
         margin: themeMargin,
         padding: themePadding,
+        decoration: new BoxDecoration(
+          color: Colors.grey,
+          border: new Border.all(color: new Color(0xFF9E9E9E)),
+        ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            FlipCard(
-              rotateSide: RotateSide.bottom,
-              onTapFlipping: true,
-              axis: FlipAxis.vertical,
-              controller: _cong,
-              frontWidget: Center(
-                child: SizedBox(
-                  height: 450,
-                  width: 280,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(0),
-                    // Image border
-                    child: SizedBox.fromSize(
-                        size: Size.fromRadius(50),
-                        child: Stack(
-                            alignment: Alignment.bottomCenter,
-                            children: <Widget>[
-                              getImage(userssss),
-                              getName(userssss)
-                            ])), // Image radius
-//                        child:  getImage(userssss)),
-                  ),
-                ),
-              ),
-              backWidget: buildCardView(450, 280, 0, 50,
-                  Image.asset('assets/cover.jpg', fit: BoxFit.cover)),
-            ),
-//            Container(
-//              height: 20,
-//              width: 30,
-//              color: Colors.red,
-//            ),
+//            OutlinedButton(onPressed: onPressed, child: child)
+            OutlinedButton(
+                style: flatButtonStyle,
+                onPressed: () {
+                  _cong.flipcard();
+                  setState(() {
+                    counter = counter + 1;
+                    print('$counter');
+                  });
+//                  if (kDebugMode) {
+//                    print('++++++++++++');
+//                    print('$counter');
+//                  }
+                },
+                child: FlipCard(
+                  animationDuration: Duration(milliseconds: 800),
+                  rotateSide: RotateSide.bottom,
+                  onTapFlipping: false,
+                  axis: FlipAxis.vertical,
+                  controller: _cong,
+                  frontWidget: buildCardView.buildCardViewFrontByUser(user),
+                  backWidget: buildCardView.buildCardViewBack(
+                      Image.asset('assets/cover.jpg', fit: BoxFit.cover)),
+                )),
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                StepProgressIndicator(
-                  totalSteps: 100,
-                  currentStep: 10,
-                  size: 20,
-                  padding: 0,
-                  selectedColor: Colors.yellow,
-                  unselectedColor: Colors.green,
-                  roundedEdges: Radius.circular(10),
-                  selectedGradientColor: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [Colors.yellow, Colors.green],
-                  ),
-                  unselectedGradientColor: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [Colors.grey, Colors.white70],
-                  ),
-                ),
+                progressIndicator.getProgressIndicator(counter),
               ],
             ),
             Column(
               children: <Widget>[
-                loadImageButton(context, changePhotoCard),
-                buildFilledButton(context, changeDescription, '/description')
+                buttonsUtils.loadImageButton(context, changePhotoCard),
+                buttonsUtils.buildFilledButton(
+                    context, changeDescription, '/description')
               ],
             ),
           ],
@@ -155,97 +141,12 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Image getImage(List userssss) {
-    if (userssss.isNotEmpty) {
-      return Image.memory(base64.decode(userssss.last.image!));
-    } else {
-      return Image.asset('assets/cover.jpg', fit: BoxFit.cover);
-    }
-  }
-
-  Text getName(List userssss) {
-    if (userssss.isNotEmpty) {
-      if (userssss.last.name == null) {
-        return getText('Enter your name');
-      } else {
-        return getText(userssss.last.name);
-      }
-    }
-    return Text('Enter your name');
-  }
-
-  Text getText(String text) {
-    return Text(text,
-        style: TextStyle(
-            color: themeTextCardColor,
-            fontWeight: themeTextFont,
-            fontSize: themeTextSize));
-  }
-
-  Center buildCardView(double height, double width, double radiusBorder,
-      double radiusImage, Image image) {
-    return Center(
-      child: SizedBox(
-        height: height,
-        width: width,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(radiusBorder), // Image border
-          child: SizedBox.fromSize(
-              size: Size.fromRadius(radiusImage), // Image radius
-              child: image),
-        ),
-      ),
-    );
-  }
-
-  FilledButton buildFilledButton(
-      BuildContext context, String name, String url) {
-    return FilledButton(
-        onPressed: () {
-          Navigator.pushNamed(context, url);
-        },
-        style: FilledButton.styleFrom(
-          fixedSize: themeSizeButton,
-          backgroundColor: themeAppColor,
-          elevation: 5,
-        ),
-        child: Text(
-          name,
-          style: TextStyle(color: Colors.white, fontSize: 18),
-        ));
-  }
-
-  FilledButton loadImageButton(BuildContext context, String name) {
-    String byte64String;
-    return FilledButton(
-        onPressed: () async {
-          try {
-            byte64String = await pickImage();
-            if (byte64String.length > 0) {
-              UserDatabase().insertOrUpdateImageInUser(byte64String);
-            }
-            Navigator.pushNamed(context, '/');
-          } catch (e) {
-            print("ERROR while picking file.");
-            Navigator.pushNamed(context, '/');
-          }
-        },
-        style: FilledButton.styleFrom(
-          fixedSize: themeSizeButton,
-          backgroundColor: themeAppColor,
-          elevation: 5,
-        ),
-        child: Text(
-          name,
-          style: TextStyle(color: Colors.white, fontSize: 18),
-        ));
-  }
-
-  Future<String> pickImage() async {
-    var image = await ImagePicker()
-        .pickImage(source: ImageSource.gallery, imageQuality: 30);
-    var imageBytes = await image!.readAsBytes();
-    String base64Image = base64Encode(imageBytes);
-    return base64Image;
-  }
+  final ButtonStyle flatButtonStyle = TextButton.styleFrom(
+    primary: Colors.black87,
+    minimumSize: Size(10, 10),
+    padding: EdgeInsets.symmetric(horizontal: 16.0),
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(2.0)),
+    ),
+  );
 }
