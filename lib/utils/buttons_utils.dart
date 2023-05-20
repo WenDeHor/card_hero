@@ -5,12 +5,15 @@ import 'package:card_hero/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-class ButtonsUtils{
+import '../menu/1_screan.dart';
+
+class ButtonsUtils {
   FilledButton buildFilledButton(
       BuildContext context, String name, String url) {
     return FilledButton(
         onPressed: () {
-          Navigator.pushNamed(context, url);
+//          cong.flipcard();
+//          Navigator.pushNamed(context, url);
         },
         style: FilledButton.styleFrom(
           fixedSize: themeSizeButton,

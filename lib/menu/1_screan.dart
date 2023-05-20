@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:card_hero/db/user_database.dart';
+import 'package:card_hero/db/user_power.dart';
 import 'package:card_hero/utils/build_card_view.dart';
 import 'package:card_hero/utils/constants.dart';
 import 'package:card_hero/utils/progress_indicator.dart';
@@ -18,15 +19,17 @@ import 'package:flutter_flip_card/flutter_flip_card.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sqflite/sqflite.dart';
 
+import '../model/user_power.dart';
+
 ImageAndNameFromListUser imageAndNameFromListUser = ImageAndNameFromListUser();
 ProgressIndicatorUtils progressIndicator = ProgressIndicatorUtils();
 ButtonsUtils buttonsUtils = ButtonsUtils();
 BuildCardView buildCardView = BuildCardView();
 
-FlipCardController _cong = FlipCardController();
 var counter = 0;
 var durarion = 500;
 User user = User();
+UserPower userPower = UserPower();
 
 List<User> pList = [];
 List<User> userssss = [];
@@ -44,19 +47,23 @@ class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<HomeScreen> createState() => HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class HomeScreenState extends State<HomeScreen> {
   late UserDatabase userDatabase;
-
-//  List<User> userssss = [];
+  late UserPowerDB userPowerDB;
 
   @override
   initState() {
     super.initState();
     print("+++++++++++++++initState++++++++++++++}");
     this.userDatabase = UserDatabase();
+    this.userPowerDB = UserPowerDB();
+    this.userPowerDB.getDataBase().whenComplete(() async {
+      getCounter();
+      setState(() {});
+    });
     this.userDatabase.getDataBase().whenComplete(() async {
       _refreshNotes();
       setState(() {});
@@ -65,6 +72,28 @@ class _HomeScreenState extends State<HomeScreen> {
 
   int getIdUser() {
     return userssss.length;
+  }
+
+  Future<int> getCounter() async {
+    final datas = await userPowerDB.getCounter();
+    counter = userPower.counter!;
+    print('++++++++++++++++++++++$counter++++++++++++++');
+
+    setState(() {
+      userPower = datas;
+      counter = userPower.counter!;
+    });
+    return counter;
+  }
+
+  void incrementCounter() async {
+    UserPower userPower = await userPowerDB.getCounter();
+    userPower.counter;
+    if (userPower.counter != null) {
+      int counter2 = userPower.counter! + 1;
+      await userPowerDB.insertCounter(counter2);
+      setState(() {});
+    }
   }
 
   void _refreshNotes() async {
@@ -79,6 +108,8 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  FlipCardController controller = FlipCardController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,37 +121,35 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Container(
         margin: themeMargin,
         padding: themePadding,
-        decoration: new BoxDecoration(
-          color: Colors.grey,
-          border: new Border.all(color: new Color(0xFF9E9E9E)),
-        ),
+//        decoration: new BoxDecoration(
+//          color: Colors.grey,
+//          border: new Border.all(color: new Color(0xFF9E9E9E)),
+//        ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
 //            OutlinedButton(onPressed: onPressed, child: child)
-            OutlinedButton(
-                style: flatButtonStyle,
-                onPressed: () {
-                  _cong.flipcard();
-                  setState(() {
-                    counter = counter + 1;
-                    print('$counter');
-                  });
-//                  if (kDebugMode) {
-//                    print('++++++++++++');
-//                    print('$counter');
-//                  }
-                },
-                child: FlipCard(
-                  animationDuration: Duration(milliseconds: 800),
-                  rotateSide: RotateSide.bottom,
-                  onTapFlipping: false,
-                  axis: FlipAxis.vertical,
-                  controller: _cong,
-                  frontWidget: buildCardView.buildCardViewFrontByUser(user),
-                  backWidget: buildCardView.buildCardViewBack(
-                      Image.asset('assets/cover.jpg', fit: BoxFit.cover)),
-                )),
+            InkWell(
+              child: FlipCard(
+                animationDuration: Duration(milliseconds: 800),
+                rotateSide: RotateSide.bottom,
+                onTapFlipping: false,
+                axis: FlipAxis.vertical,
+                controller: controller,
+                frontWidget: Container(
+                  child: buildCardView.buildCardViewFrontByUser(user),
+                ),
+                backWidget: buildCardView.buildCardViewBack(
+                    Image.asset('assets/cover.jpg', fit: BoxFit.cover)),
+              ),
+              onTap: () {
+                for( var i=0; i<100; i++){
+                  controller.flipcard();
+                }
+                incrementCounter();
+                Future<int> test =getCounter();
+              },
+            ),
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -131,8 +160,21 @@ class _HomeScreenState extends State<HomeScreen> {
             Column(
               children: <Widget>[
                 buttonsUtils.loadImageButton(context, changePhotoCard),
-                buttonsUtils.buildFilledButton(
-                    context, changeDescription, '/description')
+//                buttonsUtils.buildFilledButton(
+//                    context, changeDescription, '/description'),
+                FilledButton(
+                    onPressed: () {
+                      controller.flipcard();
+                    },
+                    style: FilledButton.styleFrom(
+                      fixedSize: themeSizeButton,
+                      backgroundColor: themeAppColor,
+                      elevation: 5,
+                    ),
+                    child: Text(
+                      'FLIP',
+                      style: TextStyle(color: Colors.white, fontSize: 18),
+                    )),
               ],
             ),
           ],
@@ -141,12 +183,20 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  final ButtonStyle flatButtonStyle = TextButton.styleFrom(
-    primary: Colors.black87,
-    minimumSize: Size(10, 10),
-    padding: EdgeInsets.symmetric(horizontal: 16.0),
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.all(Radius.circular(2.0)),
-    ),
-  );
+//  void coooutner() {
+//    cong.flipcard();
+//    setState(() {
+//      counter = counter + 1;
+//      print('$counter');
+//    });
+//  }
+
+//  final ButtonStyle flatButtonStyle = TextButton.styleFrom(
+//    primary: Colors.blue,
+//    minimumSize: Size(10, 10),
+//    padding: EdgeInsets.all(100.0),
+//    shape: const RoundedRectangleBorder(
+//      borderRadius: BorderRadius.all(Radius.circular(20.0)),
+//    ),
+//  );
 }
