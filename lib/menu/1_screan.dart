@@ -1,6 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+import 'dart:math';
+import 'dart:developer';
+import 'dart:async';
+
+import 'package:path_provider/path_provider.dart';
+import 'package:lil_auto_increment/lil_auto_increment.dart';
 
 import 'package:card_hero/db/user_database.dart';
 import 'package:card_hero/db/user_power.dart';
@@ -15,11 +21,14 @@ import 'package:card_hero/utils/image_and_name_from_list_user.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_flip_card/flutter_flip_card.dart';
+
+//import 'package:flutter_flip_card/flutter_flip_card.dart';
+import 'package:flip_card/flip_card.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../model/user_power.dart';
+import '../utils/Inherited_notifier_finish.dart';
 
 ImageAndNameFromListUser imageAndNameFromListUser = ImageAndNameFromListUser();
 ProgressIndicatorUtils progressIndicator = ProgressIndicatorUtils();
@@ -27,12 +36,19 @@ ButtonsUtils buttonsUtils = ButtonsUtils();
 BuildCardView buildCardView = BuildCardView();
 
 var counter = 0;
+int _counter2 = 0;
 var durarion = 500;
 User user = User();
 UserPower userPower = UserPower();
 
 List<User> pList = [];
 List<User> userssss = [];
+
+//FlipCardController controller = FlipCardController();
+GlobalKey<FlipCardState> cardKey = GlobalKey<FlipCardState>();
+int turnCounter = 0;
+
+final _model = SimpleCalcWidgetModel();
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -57,7 +73,6 @@ class HomeScreenState extends State<HomeScreen> {
   @override
   initState() {
     super.initState();
-    print("+++++++++++++++initState++++++++++++++}");
     this.userDatabase = UserDatabase();
     this.userPowerDB = UserPowerDB();
     this.userPowerDB.getDataBase().whenComplete(() async {
@@ -77,7 +92,6 @@ class HomeScreenState extends State<HomeScreen> {
   Future<int> getCounter() async {
     final datas = await userPowerDB.getCounter();
     counter = userPower.counter!;
-    print('++++++++++++++++++++++$counter++++++++++++++');
 
     setState(() {
       userPower = datas;
@@ -103,12 +117,8 @@ class HomeScreenState extends State<HomeScreen> {
       if (datas.length > 0) {
         user = datas.last;
       }
-      print("+++++++++++++++${userssss.toString()}");
-      print("+++++++++++++++${userssss.length}");
     });
   }
-
-  FlipCardController controller = FlipCardController();
 
   @override
   Widget build(BuildContext context) {
@@ -117,86 +127,161 @@ class HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: const Text('My hero'),
         backgroundColor: themeAppColor,
+        actions: <Widget>[
+          new IconButton(
+            icon: new Icon(Icons.shopping_cart),
+            onPressed: () {},
+          ),
+          new IconButton(
+            icon: new Icon(Icons.monetization_on),
+            onPressed: () {},
+          )
+        ],
       ),
       body: Container(
         margin: themeMargin,
         padding: themePadding,
-//        decoration: new BoxDecoration(
-//          color: Colors.grey,
-//          border: new Border.all(color: new Color(0xFF9E9E9E)),
-//        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-//            OutlinedButton(onPressed: onPressed, child: child)
-            InkWell(
-              child: FlipCard(
-                animationDuration: Duration(milliseconds: 800),
-                rotateSide: RotateSide.bottom,
-                onTapFlipping: false,
-                axis: FlipAxis.vertical,
-                controller: controller,
-                frontWidget: Container(
-                  child: buildCardView.buildCardViewFrontByUser(user),
-                ),
-                backWidget: buildCardView.buildCardViewBack(
-                    Image.asset('assets/cover.jpg', fit: BoxFit.cover)),
+        child: ChangeNotifierProvider(
+          model: _model,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Container(
+                width: 300,
+                height: 500,
+                child: const FirstFlipCard(),
               ),
-              onTap: () {
-                for( var i=0; i<100; i++){
-                  controller.flipcard();
-                }
-                incrementCounter();
-                Future<int> test =getCounter();
-              },
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                progressIndicator.getProgressIndicator(counter),
-              ],
-            ),
-            Column(
-              children: <Widget>[
-                buttonsUtils.loadImageButton(context, changePhotoCard),
-//                buttonsUtils.buildFilledButton(
-//                    context, changeDescription, '/description'),
-                FilledButton(
-                    onPressed: () {
-                      controller.flipcard();
-                    },
-                    style: FilledButton.styleFrom(
-                      fixedSize: themeSizeButton,
-                      backgroundColor: themeAppColor,
-                      elevation: 5,
-                    ),
-                    child: Text(
-                      'FLIP',
-                      style: TextStyle(color: Colors.white, fontSize: 18),
-                    )),
-              ],
-            ),
-          ],
+             const ResultWidget(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  buttonsUtils.loadImageButton(context, changePhotoCard),
+                  FilledButton(
+                      onPressed: () {
+                        setState(() => cardKey.currentState?.toggleCard());
+                        if (turnCounter >= 100) {
+                          turnCounter++;
+                        }
+                      },
+                      style: FilledButton.styleFrom(
+                        fixedSize: themeSizeButton,
+                        backgroundColor: themeAppColor,
+                        elevation: 5,
+                      ),
+                      child: Text(
+                        'FLIP',
+                        style: TextStyle(color: Colors.white, fontSize: 18),
+                      )),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-//  void coooutner() {
-//    cong.flipcard();
-//    setState(() {
-//      counter = counter + 1;
-//      print('$counter');
-//    });
-//  }
-
-//  final ButtonStyle flatButtonStyle = TextButton.styleFrom(
-//    primary: Colors.blue,
-//    minimumSize: Size(10, 10),
-//    padding: EdgeInsets.all(100.0),
-//    shape: const RoundedRectangleBorder(
-//      borderRadius: BorderRadius.all(Radius.circular(20.0)),
-//    ),
-//  );
+  Column buildColumn() {
+    return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                progressIndicator.getProgressIndicator(turnCounter),
+              ],
+            );
+  }
 }
+
+class FirstFlipCard extends StatelessWidget {
+  const FirstFlipCard({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+
+   return FlipCard(
+        key: cardKey,
+        flipOnTouch: true,
+        onFlip: () {
+          turnCounter++;
+          ChangeNotifierProvider.read<SimpleCalcWidgetModel>(context)
+              ?.increment();
+          print("turnCounter++++++++++++++++${turnCounter}");
+        },
+        front: Card(
+          elevation: 4,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12)),
+          child: Center(
+            child: buildCardView.buildCardViewFrontByUser(user),
+          ),
+        ),
+        back: Card(
+          elevation: 4,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12)),
+          child: Center(
+            child: buildCardView.buildCardViewBack(
+                Image.asset('assets/cover.jpg', fit: BoxFit.cover)),
+          ),
+        ));
+  }
+}
+
+class ResultWidget extends StatelessWidget {
+  const ResultWidget({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final int value = ChangeNotifierProvider.watch<SimpleCalcWidgetModel>(context)
+        ?.firstNumber ??
+        10;
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        progressIndicator.getProgressIndicator(value),
+      ],
+    );
+  }
+}
+
+class SimpleCalcWidgetModel extends ChangeNotifier {
+  int? firstNumber=0;
+  int? summResult;
+
+  void increment(){
+    firstNumber=firstNumber!+1;
+    notifyListeners();
+  }
+}
+
+class ChangeNotifierProvider<T extends ChangeNotifier>
+    extends InheritedNotifier<T> {
+  ChangeNotifierProvider({
+    Key? key,
+    required T model,
+    required Widget child,
+  }) : super(
+    key: key,
+    notifier: model,
+    child: child,
+  );
+
+  static T? watch<T extends ChangeNotifier>(BuildContext context) {
+    return context
+        .dependOnInheritedWidgetOfExactType<ChangeNotifierProvider<T>>()
+        ?.notifier;
+  }
+
+  static T? read<T extends ChangeNotifier>(BuildContext context) {
+    final widget = context
+        .getElementForInheritedWidgetOfExactType<ChangeNotifierProvider<T>>()
+        ?.widget;
+    if (widget is ChangeNotifierProvider<T>) {
+      return widget.notifier;
+    } else {
+      return null;
+    }
+  }
+}
+

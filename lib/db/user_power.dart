@@ -23,6 +23,8 @@ class UserPowerDB {
         await db.execute(
           "CREATE TABLE $tableName (id TEXT, counter INTEGER)",
         );
+        await db.rawInsert(
+            "INSERT INTO $tableName (id, counter) VALUES ('userPower', '1')");
       },
     );
   }
@@ -52,7 +54,8 @@ class UserPowerDB {
     }
   }
 
-
-
-
+  Future<void> dropTable() async {
+    Database db = await getDataBase();
+    db.rawDelete("DROP TABLE IF EXISTS usersPower");
+  }
 }

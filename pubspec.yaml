@@ -43,6 +43,7 @@ dependencies:
   step_progress_indicator: ^1.0.2
 
   image_size_getter: ^2.1.2
+  lil_auto_increment:
 
 dev_dependencies:
   flutter_test:
