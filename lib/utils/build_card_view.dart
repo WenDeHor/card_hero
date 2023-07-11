@@ -8,11 +8,11 @@ import '../model/user_model.dart';
 ImageAndNameFromListUser imageAndNameFromListUser = ImageAndNameFromListUser();
 
 class BuildCardView {
-  Center buildCardViewBack(Image image) {
+  Center buildCardViewBack(dynamic height, dynamic width,Image image) {
     return Center(
       child: SizedBox(
-        height: heightCardView,
-        width: widthCardView,
+        height: height,
+        width: width,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(radiusBorderCardView),
           // Image border
@@ -27,8 +27,8 @@ class BuildCardView {
   Center buildCardViewFrontByList(List userssss) {
     return Center(
       child: SizedBox(
-        height: heightCardView, //450
-        width: widthCardView, //300
+//        height: heightCardView, //450
+//        width: widthCardView, //300
         child: ClipRRect(
           borderRadius: BorderRadius.circular(radiusBorderCardView),
           child: SizedBox.fromSize(
@@ -46,11 +46,11 @@ class BuildCardView {
     );
   }
 
-  Center buildCardViewFrontByUser(User user) {
+  Center buildCardViewFrontByUser(dynamic height, dynamic width, User user) {
     return Center(
       child: SizedBox(
-        height: heightCardView, //450
-        width: widthCardView, //300
+        height: height, //450
+        width: width, //300
         child: ClipRRect(
           borderRadius: BorderRadius.circular(radiusBorderCardView),
           child: SizedBox.fromSize(

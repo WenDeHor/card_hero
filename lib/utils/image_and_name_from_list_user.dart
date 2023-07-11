@@ -32,6 +32,10 @@ class ImageAndNameFromListUser {
     }
   }
 
+  Uint8List getUint8List(User user) {
+    return base64.decode(user.image!);
+  }
+
   Text getNameByList(List userssss) {
     if (userssss.isNotEmpty) {
       if (userssss.last.name == null) {

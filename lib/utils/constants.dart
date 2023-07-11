@@ -26,7 +26,17 @@ var size = 20.0;
 var padding = 0.0;
 
 //BuildCardView
-var heightCardView = 450.0;
-var widthCardView = 300.0;
+//var heightCardView = 450.0;
+//var widthCardView = 300.0;
 var radiusBorderCardView = 0.0;
 var radiusImageCardView = 50.0;
+
+//resource
+var favorite = Icons.favorite;
+var imageColor_1 = const Color.fromARGB(240, 255, 0, 0);
+var star = Icons.star;
+var imageColor_2 =const Color.fromARGB(240, 255, 215, 0);
+var add_moderator = Icons.add_moderator;
+var imageColor_3 = const Color.fromARGB(240, 0, 128, 0);
+var add_box = Icons.add_box;
+var imageColor_4 = const Color.fromARGB(240, 255, 165, 0);

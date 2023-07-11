@@ -1,34 +1,22 @@
-import 'dart:convert';
-import 'dart:io';
-import 'dart:typed_data';
-import 'dart:math';
-import 'dart:developer';
 import 'dart:async';
-
-import 'package:path_provider/path_provider.dart';
-import 'package:lil_auto_increment/lil_auto_increment.dart';
+import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:card_hero/db/user_database.dart';
 import 'package:card_hero/db/user_power.dart';
-import 'package:card_hero/utils/build_card_view.dart';
-import 'package:card_hero/utils/constants.dart';
-import 'package:card_hero/utils/progress_indicator.dart';
-import 'package:card_hero/menu/navbar.dart';
+import 'package:card_hero/menu/bottom_app_bar_widget.dart';
 import 'package:card_hero/model/user_model.dart';
+import 'package:card_hero/utils/build_card_view.dart';
 import 'package:card_hero/utils/buttons_utils.dart';
+import 'package:card_hero/utils/constants.dart';
 import 'package:card_hero/utils/image_and_name_from_list_user.dart';
-
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
+import 'package:card_hero/utils/image_picker.dart';
+import 'package:card_hero/utils/progress_indicator.dart';
 import 'package:flutter/material.dart';
-
-//import 'package:flutter_flip_card/flutter_flip_card.dart';
-import 'package:flip_card/flip_card.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:flutter_flip_card/flutter_flip_card.dart';
 
 import '../model/user_power.dart';
-import '../utils/Inherited_notifier_finish.dart';
+import 'mine_flip_card.dart';
 
 ImageAndNameFromListUser imageAndNameFromListUser = ImageAndNameFromListUser();
 ProgressIndicatorUtils progressIndicator = ProgressIndicatorUtils();
@@ -36,15 +24,17 @@ ButtonsUtils buttonsUtils = ButtonsUtils();
 BuildCardView buildCardView = BuildCardView();
 
 var counter = 0;
-int _counter2 = 0;
 var durarion = 500;
-User user = User();
-UserPower userPower = UserPower();
+const appName = 'CattyLandy';
+User user = const User();
+UserPower userPower = const UserPower();
 
 List<User> pList = [];
 List<User> userssss = [];
 
-//FlipCardController controller = FlipCardController();
+ImagePickerPage imagePickerPage = ImagePickerPage();
+
+FlipCardController controller = FlipCardController();
 GlobalKey<FlipCardState> cardKey = GlobalKey<FlipCardState>();
 int turnCounter = 0;
 
@@ -73,20 +63,15 @@ class HomeScreenState extends State<HomeScreen> {
   @override
   initState() {
     super.initState();
-    this.userDatabase = UserDatabase();
-    this.userPowerDB = UserPowerDB();
-    this.userPowerDB.getDataBase().whenComplete(() async {
+    userDatabase = UserDatabase();
+    userPowerDB = UserPowerDB();
+    userPowerDB.getDataBase().whenComplete(() async {
       getCounter();
       setState(() {});
     });
-    this.userDatabase.getDataBase().whenComplete(() async {
-      _refreshNotes();
+    userDatabase.getDataBase().whenComplete(() async {
       setState(() {});
     });
-  }
-
-  int getIdUser() {
-    return userssss.length;
   }
 
   Future<int> getCounter() async {
@@ -100,41 +85,36 @@ class HomeScreenState extends State<HomeScreen> {
     return counter;
   }
 
-  void incrementCounter() async {
-    UserPower userPower = await userPowerDB.getCounter();
-    userPower.counter;
-    if (userPower.counter != null) {
-      int counter2 = userPower.counter! + 1;
-      await userPowerDB.insertCounter(counter2);
-      setState(() {});
-    }
-  }
-
-  void _refreshNotes() async {
-    final datas = await userDatabase.getAllUsers();
-    setState(() {
-      userssss = datas;
-      if (datas.length > 0) {
-        user = datas.last;
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    String byte64String;
     return Scaffold(
-      drawer: Navbar(),
+//      drawer: Navbar(),
       appBar: AppBar(
-        title: const Text('My hero'),
+        title: Text(appName, style: getTextStileTitle()),
         backgroundColor: themeAppColor,
         actions: <Widget>[
-          new IconButton(
-            icon: new Icon(Icons.shopping_cart),
+          IconButton(
+            icon: const Icon(Icons.shopping_cart),
             onPressed: () {},
           ),
-          new IconButton(
-            icon: new Icon(Icons.monetization_on),
-            onPressed: () {},
+          IconButton(
+            icon: const Icon(Icons.account_box_outlined),
+            onPressed: () async {
+              //TODO Wiil be new windows with: add image, add text, add skills
+              try {
+                byte64String = await imagePickerPage.pickImage();
+                if (byte64String.length > 0) {
+                  UserDatabase().insertOrUpdateImageInUser(byte64String);
+                  ChangeNotifierProvider.read<SimpleCalcWidgetModel>(context)
+                      ?.updateImage();
+                }
+                Navigator.pushNamed(context, '/');
+              } catch (e) {
+                print("ERROR while picking file.");
+                Navigator.pushNamed(context, '/');
+              }
+            },
           )
         ],
       ),
@@ -145,96 +125,86 @@ class HomeScreenState extends State<HomeScreen> {
           model: _model,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Container(
-                width: 300,
-                height: 500,
-                child: const FirstFlipCard(),
-              ),
-             const ResultWidget(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  buttonsUtils.loadImageButton(context, changePhotoCard),
-                  FilledButton(
-                      onPressed: () {
-                        setState(() => cardKey.currentState?.toggleCard());
-                        if (turnCounter >= 100) {
-                          turnCounter++;
-                        }
-                      },
-                      style: FilledButton.styleFrom(
-                        fixedSize: themeSizeButton,
-                        backgroundColor: themeAppColor,
-                        elevation: 5,
-                      ),
-                      child: Text(
-                        'FLIP',
-                        style: TextStyle(color: Colors.white, fontSize: 18),
-                      )),
-                ],
-              ),
+            children: [
+              const UserFlipCard(),
+              const LevelScaleWidget(),
+              resourceWidget(50, 360, 5000, 10)
             ],
           ),
         ),
       ),
+      bottomNavigationBar: const BottomAppBarWidget(),
     );
   }
 
-  Column buildColumn() {
-    return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                progressIndicator.getProgressIndicator(turnCounter),
-              ],
-            );
-  }
-}
-
-class FirstFlipCard extends StatelessWidget {
-  const FirstFlipCard({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-
-   return FlipCard(
-        key: cardKey,
-        flipOnTouch: true,
-        onFlip: () {
-          turnCounter++;
-          ChangeNotifierProvider.read<SimpleCalcWidgetModel>(context)
-              ?.increment();
-          print("turnCounter++++++++++++++++${turnCounter}");
-        },
-        front: Card(
-          elevation: 4,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12)),
-          child: Center(
-            child: buildCardView.buildCardViewFrontByUser(user),
-          ),
+  Widget resourceWidget(int val_1, int val_2, int val_3, int val_4) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            resourceIcons(favorite, imageColor_1, val_1),
+            resourceIcons(star, imageColor_2, val_2)
+          ],
         ),
-        back: Card(
-          elevation: 4,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12)),
-          child: Center(
-            child: buildCardView.buildCardViewBack(
-                Image.asset('assets/cover.jpg', fit: BoxFit.cover)),
-          ),
-        ));
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            resourceIcons(add_moderator, imageColor_3, val_3),
+            resourceIcons(add_box, imageColor_4, val_4)
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget resourceIcons(IconData icons, Color colors, int value) {
+    return Row(
+      children: [
+        Icon(icons, color: colors, size: 40),
+        Text(
+          "${value}",
+          style: getTextStile(),
+        ),
+      ],
+    );
+  }
+
+  TextStyle getTextStile() {
+    return const TextStyle(
+      fontFamily: 'DeliciousHandrawn',
+      color: Colors.black,
+      fontStyle: FontStyle.italic,
+      fontSize: 40.0,
+      shadows: [Shadow(offset: Offset(2.0, 2.0), blurRadius: 6.0, color: Colors.blueGrey)],
+    );
+  }
+
+  TextStyle getTextStileTitle() {
+    return const TextStyle(
+        fontFamily: 'DeliciousHandrawn',
+        color: Colors.white,
+        fontStyle: FontStyle.italic,
+        fontSize: 40.0,
+        shadows: [Shadow(offset: Offset(2.0, 2.0), blurRadius: 6.0)]);
   }
 }
 
-class ResultWidget extends StatelessWidget {
-  const ResultWidget({Key? key}) : super(key: key);
+class LevelScaleWidget extends StatelessWidget {
+  const LevelScaleWidget({Key? key}) : super(key: key);
+
+  int? getCounter() {
+    SimpleCalcWidgetModel simpleCalcWidgetModel = SimpleCalcWidgetModel();
+    return simpleCalcWidgetModel.getCounter();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final int value = ChangeNotifierProvider.watch<SimpleCalcWidgetModel>(context)
-        ?.firstNumber ??
-        10;
+    final int value =
+        ChangeNotifierProvider.watch<SimpleCalcWidgetModel>(context)
+                ?.firstNumber ??
+            10;
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -246,42 +216,23 @@ class ResultWidget extends StatelessWidget {
 }
 
 class SimpleCalcWidgetModel extends ChangeNotifier {
-  int? firstNumber=0;
+  int? firstNumber = 0;
   int? summResult;
+  Uint8List? flipCard;
 
-  void increment(){
-    firstNumber=firstNumber!+1;
+  void increment() {
+    firstNumber = firstNumber! + 1;
+    print("turnCounter++++++++++++++++${firstNumber}");
     notifyListeners();
   }
-}
 
-class ChangeNotifierProvider<T extends ChangeNotifier>
-    extends InheritedNotifier<T> {
-  ChangeNotifierProvider({
-    Key? key,
-    required T model,
-    required Widget child,
-  }) : super(
-    key: key,
-    notifier: model,
-    child: child,
-  );
-
-  static T? watch<T extends ChangeNotifier>(BuildContext context) {
-    return context
-        .dependOnInheritedWidgetOfExactType<ChangeNotifierProvider<T>>()
-        ?.notifier;
+  Uint8List? updateImage(){
+    flipCard = base64.decode(user.image!);
+    notifyListeners();
+    return flipCard;
   }
 
-  static T? read<T extends ChangeNotifier>(BuildContext context) {
-    final widget = context
-        .getElementForInheritedWidgetOfExactType<ChangeNotifierProvider<T>>()
-        ?.widget;
-    if (widget is ChangeNotifierProvider<T>) {
-      return widget.notifier;
-    } else {
-      return null;
-    }
+  int? getCounter() {
+    return firstNumber;
   }
 }
-

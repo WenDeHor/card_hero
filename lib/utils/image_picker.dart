@@ -1,3 +1,18 @@
+import 'package:image_picker/image_picker.dart';
+import 'dart:convert';
+
+class ImagePickerPage{
+  Future<String> pickImage() async {
+    var image = await ImagePicker()
+        .pickImage(source: ImageSource.gallery, imageQuality: 30);
+    var imageBytes = await image!.readAsBytes();
+    String base64Image = base64Encode(imageBytes);
+    return base64Image;
+  }
+}
+
+
+
 //import 'dart:convert';
 //
 //import 'package:flutter/material.dart';
