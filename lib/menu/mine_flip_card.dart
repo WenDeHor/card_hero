@@ -41,14 +41,12 @@ class UserFlipCard extends StatelessWidget {
           width: width,
           height: height,
           color: Colors.blue,
-//          child: buildCardViewBack,
         ),
       ),
       onTap: () {
         controller.flipcard();
         ChangeNotifierProvider.read<SimpleCalcWidgetModel>(context)
             ?.increment();
-
       },
     );
   }
