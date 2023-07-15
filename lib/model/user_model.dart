@@ -2,13 +2,14 @@ class User {
   final String? idSqlLite;
   final String? idFirebase;
   final String? phone;
+  final String? password;
   final String? stiles;
   final String? longitude;
   final String? latitude;
   final String? language;
   final String? icon;
   final String? name;
-  final String? image;
+  late final String? image;
   final String? description;
   final String? lvl;
   final String? rating;
@@ -17,6 +18,7 @@ class User {
       {this.idSqlLite,
       this.idFirebase,
       this.phone,
+      this.password,
       this.stiles,
       this.longitude,
       this.latitude,
@@ -36,6 +38,7 @@ class User {
           idSqlLite == other.idSqlLite &&
           idFirebase == other.idFirebase &&
           phone == other.phone &&
+          password == other.password &&
           stiles == other.stiles &&
           longitude == other.longitude &&
           latitude == other.latitude &&
@@ -52,6 +55,7 @@ class User {
       idSqlLite.hashCode ^
       idFirebase.hashCode ^
       phone.hashCode ^
+      password.hashCode ^
       stiles.hashCode ^
       longitude.hashCode ^
       latitude.hashCode ^
@@ -65,6 +69,6 @@ class User {
 
   @override
   String toString() {
-    return 'User{idSqlLite: $idSqlLite, idFirebase: $idFirebase, phone: $phone, stiles: $stiles, longitude: $longitude, latitude: $latitude, language: $language, icon: $icon, name: $name, image: $image, description: $description, lvl: $lvl, rating: $rating}';
+    return 'User{idSqlLite: $idSqlLite, idFirebase: $idFirebase, phone: $phone, password: $password, stiles: $stiles, longitude: $longitude, latitude: $latitude, language: $language, icon: $icon, name: $name, image: ${image!.length}, description: $description, lvl: $lvl, rating: $rating}';
   }
 }
