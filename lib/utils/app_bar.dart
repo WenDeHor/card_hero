@@ -16,29 +16,63 @@ class AppBarConstructor {
       backgroundColor: themeAppColor,
       automaticallyImplyLeading: false,
       actions: <Widget>[
-        getUserRegistration(context),
-//        getExit(),
+        getUserInfoWidget(context),
+        getLoginMineWidget(context),
       ],
     );
   }
 
-  static PreferredSizeWidget registrationAppBar(BuildContext context) {
+  static PreferredSizeWidget infoAppBar(BuildContext context) {
     return AppBar(
       title: Text(appName, style: getTextStileTitle()),
       backgroundColor: themeAppColor,
       automaticallyImplyLeading: false,
       actions: <Widget>[
-        revertToMineMenu(context),
-//        getExit(),
+        revertToMineMenuWidget(context),
       ],
     );
   }
 
-  static Padding getUserRegistration(BuildContext context) {
+  static PreferredSizeWidget loginAppBar(BuildContext context) {
+    return AppBar(
+      title: Text(appName, style: getTextStileTitle()),
+      backgroundColor: themeAppColor,
+      automaticallyImplyLeading: false,
+      actions: <Widget>[
+        revertWidget(context),
+      ],
+    );
+  }
+
+  static Padding getLoginMineWidget(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0.0, 0.0, 20.0, 0.0),
+      padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
       child: IconButton(
-        icon: const Icon(Icons.account_box_outlined, size: 40),
+        icon: const Icon(Icons.settings_outlined, size: 30),
+        onPressed: ()  {
+          Navigator.pushNamed(context, '/user_enter');
+        },
+      ),
+    );
+  }
+
+  static Padding getUserInfoWidget(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
+      child: IconButton(
+        icon: const Icon(Icons.description, size: 30),
+        onPressed: () {
+          Navigator.pushNamed(context, '/user_info');
+        },
+      ),
+    );
+  }
+
+  static Padding getUserRegistrationWidget(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
+      child: IconButton(
+        icon: const Icon(Icons.account_box_outlined, size: 30),
         onPressed: () async {
           Navigator.pushNamed(context, '/user_registration');
         },
@@ -46,19 +80,33 @@ class AppBarConstructor {
     );
   }
 
-  static Padding revertToMineMenu(BuildContext context) {
+  static Padding revertToMineMenuWidget(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0.0, 0.0, 20.0, 0.0),
       child: IconButton(
         icon: const Icon(Icons.fast_rewind, size: 40),
         onPressed: () async {
+//          Navigator.pop(context);
+          Navigator.pushNamed(context, '/');
+        },
+      ),
+    );
+  }
+
+  static Padding revertWidget(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0.0, 0.0, 20.0, 0.0),
+      child: IconButton(
+        icon: const Icon(Icons.fast_rewind, size: 40),
+        onPressed: () {
+//          Navigator.pop(context);
           Navigator.pop(context);
         },
       ),
     );
   }
 
-  static IconButton getExit() {
+  static IconButton getExitWidget() {
     return IconButton(
       icon: const Icon(Icons.close_rounded),
       onPressed: () {

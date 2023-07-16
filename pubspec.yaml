@@ -31,20 +31,16 @@ dependencies:
   flutter:
     sdk: flutter
 
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
+  #flutter.dev
   cupertino_icons: ^1.0.2
+  #flutter.dev
   image_picker: ^0.8.4+4
-
-  #dependencie of SQLITE
+  #tekartik.com
   sqflite: ^2.2.8+1
+  #flutter.dev
   path_provider: ^2.0.11
-
+  #OK
   step_progress_indicator: ^1.0.2
-
-  image_size_getter: ^2.1.2
-  lil_auto_increment:
-  fluttertoast: ^8.2.2
 
 dev_dependencies:
   flutter_test:
@@ -55,8 +51,9 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
+  #flutter.dev
   flutter_lints: ^1.0.0
-  flip_card: ^0.6.0
+  #gktwinapp.com OK
   flutter_flip_card: ^0.0.4
 
 # For information on the generic Dart part of this file, see the

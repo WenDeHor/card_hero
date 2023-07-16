@@ -10,9 +10,12 @@ class User {
   final String? icon;
   final String? name;
   late final String? image;
-  final String? description;
+  final String? descriptionCard;
+  final String? descriptionUser;
+  final String? statusSearch;
   final String? lvl;
   final String? rating;
+  final String? idDevice;
 
   User(
       {this.idSqlLite,
@@ -26,9 +29,12 @@ class User {
       this.icon,
       this.name,
       this.image,
-      this.description,
+      this.descriptionCard,
+      this.descriptionUser,
+      this.statusSearch,
       this.lvl,
-      this.rating});
+      this.rating,
+      this.idDevice});
 
   @override
   bool operator ==(Object other) =>
@@ -46,9 +52,12 @@ class User {
           icon == other.icon &&
           name == other.name &&
           image == other.image &&
-          description == other.description &&
+          descriptionCard == other.descriptionCard &&
+          descriptionUser == other.descriptionUser &&
+          statusSearch == other.statusSearch &&
           lvl == other.lvl &&
-          rating == other.rating;
+          rating == other.rating &&
+          idDevice == other.idDevice;
 
   @override
   int get hashCode =>
@@ -63,12 +72,15 @@ class User {
       icon.hashCode ^
       name.hashCode ^
       image.hashCode ^
-      description.hashCode ^
+      descriptionCard.hashCode ^
+      descriptionUser.hashCode ^
+      statusSearch.hashCode ^
       lvl.hashCode ^
-      rating.hashCode;
+      rating.hashCode ^
+      idDevice.hashCode;
 
   @override
   String toString() {
-    return 'User{idSqlLite: $idSqlLite, idFirebase: $idFirebase, phone: $phone, password: $password, stiles: $stiles, longitude: $longitude, latitude: $latitude, language: $language, icon: $icon, name: $name, image: ${image!.length}, description: $description, lvl: $lvl, rating: $rating}';
+    return 'User{idSqlLite: $idSqlLite, idFirebase: $idFirebase, phone: $phone, password: $password, stiles: $stiles, longitude: $longitude, latitude: $latitude, language: $language, icon: $icon, name: $name, image: $image, descriptionCard: $descriptionCard,  descriptionUser: $descriptionUser, statusSearch: $statusSearch, lvl: $lvl, rating: $rating, idDevice: $idDevice;}';
   }
 }

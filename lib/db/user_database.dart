@@ -17,80 +17,116 @@ class UserDatabase {
     Directory directory = await getApplicationDocumentsDirectory();
     String path = join(directory.path, 'user_database');
     var database =
-        await openDatabase(path, version: 14, onCreate: _createDatabase);
+        await openDatabase(path, version: 3, onCreate: _createDatabase);
     return database;
   }
 
   Future<void> _createDatabase(Database database, int version) async {
     String sql =
-        "CREATE TABLE users (idSqlLite TEXT, idFirebase TEXT, phone TEXT, password TEXT, stiles TEXT, longitude TEXT, latitude TEXT, language TEXT, icon TEXT, name TEXT, image TEXT, description TEXT, lvl TEXT, rating TEXT);";
+        "CREATE TABLE users (id_sql_lite TEXT, id_firebase TEXT, phone TEXT, password TEXT, stiles TEXT, longitude TEXT, latitude TEXT, language TEXT, icon TEXT, name TEXT, image TEXT, description_card TEXT, description_user TEXT, status_search TEXT, lvl TEXT, rating TEXT, id_device TEXT);";
     await database.execute(sql);
   }
 
   Future<void> insertOrUpdateImageInUser(String image) async {
-//    dropTable();
     Database db = await getDataBase();
+//    db.rawDelete("DROP TABLE IF EXISTS users");
     int? count =
         Sqflite.firstIntValue(await db.rawQuery("SELECT COUNT(*) FROM users"));
+//    print("++++++++++++++DB++++DELETED");
+//    db.rawDelete("DELETE FROM users");
     if (count != null && count >= 1) {
-//      print("++++++++++++++DB++++DELETED");
-//      db.rawDelete("DELETE FROM users");
       await db.rawUpdate(
-          "UPDATE users SET image = '$image' WHERE idSqlLite='user'");
+          "UPDATE users SET image = '$image' WHERE id_sql_lite='user'");
     } else {
       print("++++++++++++++DB++++${image.length}");
       await db.rawInsert(
-          "INSERT INTO users (idSqlLite, image) VALUES ('user', '$image');");
+          "INSERT INTO users (id_sql_lite, image) VALUES ('user', '$image');");
     }
   }
 
-  Future<void> insertOrUpdateUserInfo(
-      String phone, String name, String description, String password) async {
+  Future<void> insertUserRegistration(
+    String phone,
+    String password,
+    String name,
+  ) async {
     Database db = await getDataBase();
+        print("++++++++++++++DB++++CREATE");
+    String sql =
+        "CREATE TABLE users (id_sql_lite TEXT, id_firebase TEXT, phone TEXT, password TEXT, stiles TEXT, longitude TEXT, latitude TEXT, language TEXT, icon TEXT, name TEXT, image TEXT, description_card TEXT, description_user TEXT, status_search TEXT, lvl TEXT, rating TEXT, id_device TEXT);";
+    await db.execute(sql);
+    int? count =
+        Sqflite.firstIntValue(await db.rawQuery("SELECT COUNT(*) FROM users"));
+    if (count != null && count >= 1) {
+      print(
+          "++++++UPDATE++DB++++phone: $phone, password: $password, name: $name");
+      await db.rawUpdate(
+          "UPDATE users SET phone = '$phone', password = '$password', name = '$name' WHERE id_sql_lite='user'");
+    } else {
+      print(
+          "++++++INSERT+INTO++DB++++phone: $phone, password: $password, name: $name");
+      await db.rawInsert(
+          "INSERT INTO users (id_sql_lite, phone, password, name) VALUES ('user','$phone', '$password', '$name');");
+    }
+  }
+
+//TODO==========================================================>>>>>>
+  Future<void> insertOrUpdateUserCard(String phone, String name,
+      String descriptionCard, String password) async {
+    Database db = await getDataBase();
+    //db.rawDelete("DELETE FROM $tableName");
     int? count = Sqflite.firstIntValue(
         await db.rawQuery("SELECT COUNT(*) FROM $tableName"));
     if (count != null && count >= 1) {
-//      db.rawDelete("DELETE FROM $tableName");
       print(
-          "phone = '$phone', password = '$password', name = '$name', description = '$description'");
+          "UPDATE phone = '$phone', password = '$password', name = '$name', description_card = '$descriptionCard'");
       await db.rawUpdate(
-          "UPDATE users SET phone = '$phone', password = '$password', name = '$name', description = '$description' WHERE idSqlLite='user'");
+          "UPDATE users SET phone = '$phone', password = '$password', name = '$name', description_card = '$descriptionCard' WHERE id_sql_lite='user'");
     } else {
       await db.rawInsert(
-          "INSERT INTO users (idSqlLite, phone, password, name, description) VALUES ('user','$phone', '$password', '$name', '$description');");
+          "INSERT INTO users (id_sql_lite, phone, password, name, description_card) VALUES ('user','$phone', '$password', '$name', '$descriptionCard');");
     }
   }
 
   Future<List<User>> getAllUsers() async {
     Database db = await getDataBase();
+//    print("++++++++++++++DB++++CREATE");
 //    String sql =
-//        "CREATE TABLE users (idSqlLite TEXT, idFirebase TEXT, phone TEXT, password TEXT, stiles TEXT, longitude TEXT, latitude TEXT, language TEXT, icon TEXT, name TEXT, image TEXT, description TEXT, lvl TEXT, rating TEXT);";
+//        "CREATE TABLE users (id_sql_lite TEXT, id_firebase TEXT, phone TEXT, password TEXT, stiles TEXT, longitude TEXT, latitude TEXT, language TEXT, icon TEXT, name TEXT, image TEXT, description_card_card TEXT, description_card_user TEXT, status_search TEXT, lvl TEXT, rating TEXT, id_device TEXT);";
 //    await db.execute(sql);
     List<Map<String, dynamic>> usersMaps = await db.query(tableName);
     return List.generate(usersMaps.length, (index) {
       return User(
-          idSqlLite: usersMaps[index]["idSqlLite"],
+          idSqlLite: usersMaps[index]["id_sql_lite"],
+          idFirebase: usersMaps[index]["id_firebase"],
           phone: usersMaps[index]["phone"],
-          password:usersMaps[index]["password"],
+          password: usersMaps[index]["password"],
+          stiles: usersMaps[index]["stiles"],
+          longitude: usersMaps[index]["longitude"],
+          language: usersMaps[index]["language"],
+          icon: usersMaps[index]["icon"],
           name: usersMaps[index]["name"],
           image: usersMaps[index]["image"],
-          description: usersMaps[index]["description"],
+          descriptionCard: usersMaps[index]["description_card"],
+          descriptionUser: usersMaps[index]["description_user"],
+          statusSearch: usersMaps[index]["status_search"],
           lvl: usersMaps[index]["lvl"],
-          rating: usersMaps[index]["rating"]);
+          rating: usersMaps[index]["rating"],
+          idDevice: usersMaps[index]["id_device"]
+      );
     });
   }
 
   Future<User> getUser() async {
     Database db = await getDataBase();
     List<Map<String, dynamic>> user =
-        await db.rawQuery("SELECT * FROM $tableName WHERE idSqlLite='user'");
+        await db.rawQuery("SELECT * FROM $tableName WHERE id_sql_lite='user'");
     if (user.length == 1) {
       return User(
-          idSqlLite: user[0]["idSqlLite"],
+          idSqlLite: user[0]["id_sql_lite"],
           phone: user[0]["phone"],
           name: user[0]["name"],
           image: user[0]["image"],
-          description: user[0]["description"],
+          descriptionCard: user[0]["description_card"],
           lvl: user[0]["lvl"],
           rating: user[0]["rating"]);
     } else {
@@ -104,7 +140,7 @@ class UserDatabase {
         await db.rawQuery("SELECT COUNT(*) FROM $tableName"));
     if (count != null && count >= 1) {
       await db.rawUpdate(
-          "UPDATE $tableName SET lvl = '$lvl', rating = '$rating' WHERE idSqlLite='user'");
+          "UPDATE $tableName SET lvl = '$lvl', rating = '$rating' WHERE id_sql_lite='user'");
     } else {
       await db.rawInsert(
           "INSERT INTO $tableName (lvl, rating) VALUES ('$lvl', '$rating')");
@@ -114,7 +150,7 @@ class UserDatabase {
   Future<User> getRating() async {
     Database db = await getDataBase();
     List<Map<String, dynamic>> user = await db.rawQuery(
-        "SELECT lvl, rating FROM $tableName WHERE idSqlLite = 'user'");
+        "SELECT lvl, rating FROM $tableName WHERE id_sql_lite = 'user'");
     if (user.length == 1) {
       return User(lvl: user[0]["lvl"], rating: user[0]["rating"]);
     } else {
@@ -126,13 +162,13 @@ class UserDatabase {
   Future<void> updateUser(String userId, String name, String image) async {
     Database db = await getDataBase();
     db.rawUpdate(
-        "UPDATE $tableName SET name = '$name', image = '$image' WHERE idSqlLite = 'user'");
+        "UPDATE $tableName SET name = '$name', image = '$image' WHERE id_sql_lite = 'user'");
   }
 
   //TODO not use
-  Future<void> deleteUser(User user) async {
+  Future<void> deleteUser() async {
     Database db = await getDataBase();
-    await db.rawDelete("DELETE FROM $tableName WHERE idSqlLite = 'user'");
+    await db.rawDelete("DELETE FROM $tableName WHERE id_sql_lite = 'user'");
   }
 
   //TODO not use

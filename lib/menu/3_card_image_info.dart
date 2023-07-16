@@ -2,29 +2,27 @@ import 'dart:convert';
 
 import 'package:card_hero/model/user_model.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+
 import 'package:image_picker/image_picker.dart';
 
 import '../db/user_database.dart';
 import '../utils/app_bar.dart';
 
-User user = User();
-
-class UserRegistration extends StatefulWidget {
-  const UserRegistration({Key? key}) : super(key: key);
+class UserInfo extends StatefulWidget {
+  const UserInfo({Key? key}) : super(key: key);
 
   @override
-  _UserRegistrationState createState() => _UserRegistrationState();
+  _UserInfoState createState() => _UserInfoState();
 }
 
-class _UserRegistrationState extends State<UserRegistration> {
+class _UserInfoState extends State<UserInfo> {
   late UserDatabase userDatabase;
-  List<User> userList = [];
+  List<User> _userList = [];
   final _formKey = GlobalKey<FormState>();
-  TextEditingController nameController = TextEditingController();
-  TextEditingController descriptionController = TextEditingController();
-  TextEditingController phoneController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   void initState() {
@@ -41,14 +39,14 @@ class _UserRegistrationState extends State<UserRegistration> {
     print("++++++++++++++++++${users.toString()}");
     print("++++++++++++++++++${users.length}");
     setState(() {
-      userList = users;
+      _userList = users;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBarConstructor.registrationAppBar(context),
+        appBar: AppBarConstructor.infoAppBar(context),
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(15.0),
@@ -58,7 +56,7 @@ class _UserRegistrationState extends State<UserRegistration> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    fieldImage(userList),
+                    fieldImage(_userList),
                     buttonOnImage(),
                     userInfo(),
                     fieldName(),
@@ -76,15 +74,14 @@ class _UserRegistrationState extends State<UserRegistration> {
 
 //TODO Image ================================================
   Padding fieldImage(List<User> userList) {
-    double width = (MediaQuery.of(context).size.width / 100) * 80;
-    double height = (MediaQuery.of(context).size.height / 100) * 55;
     return Padding(
       padding: const EdgeInsets.fromLTRB(0.0, 5.0, 0.0, 5.0),
       child: Center(
         child: SizedBox(
-          width: width,
-          height: height,
-          child: userList.isNotEmpty
+          width: (MediaQuery.of(context).size.width / 100) *
+              80, // <-- match_parent
+          height: (MediaQuery.of(context).size.height / 100) * 55, //
+          child: userList.isNotEmpty && userList.last.image != null
               ? Image.memory(base64.decode(userList.last.image!))
               : Image.asset('assets/cover23.jpg', fit: BoxFit.cover),
         ),
@@ -96,7 +93,7 @@ class _UserRegistrationState extends State<UserRegistration> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0.0, 5.0, 0.0, 30.0),
       child: SizedBox(
-        width: MediaQuery.of(context).size.width - 5, // <-- match_parent
+        width: MediaQuery.of(context).size.width, // <-- match_parent
         height: 50, // <-- match-parent
         child: ElevatedButton(
           style: ButtonStyle(
@@ -114,6 +111,8 @@ class _UserRegistrationState extends State<UserRegistration> {
                   content: Text('image loaded success'),
                   backgroundColor: Colors.green,
                 ));
+                Navigator.pushNamed(context, '/user_info');
+              } else {
                 Navigator.pushNamed(context, '/user_registration');
               }
             } catch (e) {
@@ -159,7 +158,7 @@ class _UserRegistrationState extends State<UserRegistration> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0.0, 5.0, 0.0, 5.0),
       child: TextFormField(
-        controller: nameController,
+        controller: _nameController,
         validator: (value) {
           return validatorInput(
               value, 3, 20, 'Enter please 3 to 20 characters');
@@ -183,7 +182,7 @@ class _UserRegistrationState extends State<UserRegistration> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0.0, 5.0, 0.0, 5.0),
       child: TextFormField(
-        controller: descriptionController,
+        controller: _descriptionController,
         minLines: 1,
         // Set this
         maxLines: 8,
@@ -212,7 +211,7 @@ class _UserRegistrationState extends State<UserRegistration> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0.0, 5.0, 0.0, 5.0),
       child: TextFormField(
-        controller: phoneController,
+        controller: _phoneController,
         validator: (value) {
           return validatorInput(value, 3, 15, 'Enter phone');
         },
@@ -235,7 +234,7 @@ class _UserRegistrationState extends State<UserRegistration> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0.0, 5.0, 0.0, 5.0),
       child: TextFormField(
-        controller: passwordController,
+        controller: _passwordController,
         validator: (value) {
           return validatorInput(value, 3, 15, 'Enter password');
         },
@@ -262,25 +261,17 @@ class _UserRegistrationState extends State<UserRegistration> {
   }
 
   void pressedButton() {
-    Fluttertoast.showToast(
-        msg: "Load image",
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 5,
-        backgroundColor: Colors.deepOrange[200],
-        textColor: Colors.white,
-        fontSize: 16.0);
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: const Text("Load image"),
+      backgroundColor: Colors.deepOrange[200],
+    ));
   }
 
   void errorToast(String msg) {
-    Fluttertoast.showToast(
-        msg: msg,
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 5,
-        backgroundColor: Colors.deepOrange[200],
-        textColor: Colors.white,
-        fontSize: 16.0);
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(msg),
+      backgroundColor: Colors.deepOrange[200],
+    ));
   }
 
   Padding buttonSubmit() {
@@ -297,11 +288,11 @@ class _UserRegistrationState extends State<UserRegistration> {
           ))),
           onPressed: () {
             if (_formKey.currentState!.validate()) {
-              userDatabase.insertOrUpdateUserInfo(
-                  phoneController.text,
-                  nameController.text,
-                  descriptionController.text,
-                  passwordController.text);
+              userDatabase.insertOrUpdateUserCard(
+                  _phoneController.text,
+                  _nameController.text,
+                  _descriptionController.text,
+                  _passwordController.text);
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                 content: Text('User info saved success'),
                 backgroundColor: Colors.green,

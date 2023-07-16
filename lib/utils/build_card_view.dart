@@ -1,4 +1,4 @@
-import 'package:card_hero/menu/1_screan.dart';
+import 'package:card_hero/menu/2_mine_screan.dart';
 import 'package:card_hero/utils/image_and_name_from_list_user.dart';
 import 'package:flutter/material.dart';
 import 'package:card_hero/utils/constants.dart';
@@ -8,6 +8,7 @@ import '../model/user_model.dart';
 ImageAndNameFromListUser imageAndNameFromListUser = ImageAndNameFromListUser();
 
 class BuildCardView {
+
   Center buildCardViewBack(dynamic height, dynamic width,Image image) {
     return Center(
       child: SizedBox(

@@ -1,10 +1,7 @@
-import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:card_hero/db/user_database.dart';
-import 'package:card_hero/menu/bottom_app_bar_widget.dart';
 import 'package:card_hero/model/user_model.dart';
 import 'package:card_hero/utils/build_card_view.dart';
 import 'package:card_hero/utils/constants.dart';
@@ -14,10 +11,9 @@ import 'package:card_hero/utils/progress_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_flip_card/flutter_flip_card.dart';
-//import 'package:minimize_app/minimize_app.dart';
 
 import '../utils/app_bar.dart';
-import 'bottom_app_bar.dart';
+import 'footer_bar.dart';
 import 'mine_flip_card.dart';
 
 ImageAndNameFromListUser imageAndNameFromListUser = ImageAndNameFromListUser();
@@ -35,8 +31,8 @@ List<User> userssss = [];
 
 ImagePickerPage imagePickerPage = ImagePickerPage();
 
-FlipCardController controller = FlipCardController();
-GlobalKey<FlipCardState> cardKey = GlobalKey<FlipCardState>();
+
+//GlobalKey<FlipCardState> cardKey = GlobalKey<FlipCardState>();
 int turnCounter = 0;
 
 final _model = SimpleCalcWidgetModel();
@@ -105,8 +101,8 @@ class HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: BottomAppBarForm.getBottomAppBar(
-          Colors.blue, Colors.brown, Colors.brown, Colors.brown),
+      bottomNavigationBar: FooterBar.getMineBar(
+          context, Colors.blue, Colors.brown, Colors.brown, Colors.brown),
     );
   }
 
