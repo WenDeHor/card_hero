@@ -1,0 +1,10 @@
+
+
+1. https://github.com/jonbhanson/flutter_native_splash ======> Доналаштувати для iOS
+    # dart run flutter_native_splash:create
+    # dart run flutter_native_splash:remove
+
+2.flutter pub run flutter_oss_licenses:generate.dart
+  flutter pub run flutter_oss_licenses:generate.dart -o licenses.json --json
+
+3.dart run flutter_native_splash:create

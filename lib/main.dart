@@ -9,6 +9,7 @@ import 'menu/2_mine_screan.dart';
 import 'menu/3_card_image_info.dart';
 
 void main() async {
+
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(MaterialApp(
