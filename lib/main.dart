@@ -1,6 +1,7 @@
 import 'package:card_hero/menu/1_1_enter.dart';
 import 'package:card_hero/menu/1_2_login.dart';
 import 'package:card_hero/menu/1_3_registration.dart';
+import 'package:card_hero/menu/1_4_license.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -19,6 +20,7 @@ void main() async {
       '/user_enter': (context) => const UserEnter(),
       '/user_login': (context) => const UserLogin(),
       '/user_registration': (context) => const UserRegistration(),
+      '/license': (context) => const UserLicense(),
       '/user_info': (context) => const UserInfo(),
     },
   ));

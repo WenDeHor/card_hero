@@ -70,7 +70,7 @@ class _UserRegistrationState extends State<UserRegistration> {
         ),
       ),
       bottomNavigationBar: FooterBar.getLoginBar(
-          context, Colors.brown, Colors.brown, Colors.blue),
+          context, Colors.brown, Colors.brown, Colors.blue, Colors.brown),
     );
   }
 
@@ -173,11 +173,10 @@ class _UserRegistrationState extends State<UserRegistration> {
             borderRadius: BorderRadius.circular(50.0),
           ))),
           onPressed: () async {
-            if (_formKeyRegistration.currentState!.validate() && userList.isEmpty) {
-              userDatabase.insertUserRegistration(
-                  _phoneController.text,
-                  _passwordController.text,
-                  _nameController.text);
+            if (_formKeyRegistration.currentState!.validate() &&
+                userList.isEmpty) {
+              userDatabase.insertUserRegistration(_phoneController.text,
+                  _passwordController.text, _nameController.text);
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text('Success!. Account created'),

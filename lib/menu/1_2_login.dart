@@ -64,7 +64,7 @@ class _UserLoginState extends State<UserLogin> {
         ),
       ),
       bottomNavigationBar: FooterBar.getLoginBar(
-          context, Colors.brown, Colors.blue, Colors.brown),
+          context, Colors.brown, Colors.blue, Colors.brown, Colors.brown),
     );
   }
 
@@ -143,7 +143,8 @@ class _UserLoginState extends State<UserLogin> {
             borderRadius: BorderRadius.circular(50.0),
           ))),
           onPressed: () {
-            if (_formKeyLogin.currentState!.validate() && _userList.isNotEmpty) {
+            if (_formKeyLogin.currentState!.validate() &&
+                _userList.isNotEmpty) {
               if (_userList.last.phone == _phoneController.text &&
                   _userList.last.password == _passwordController.text) {
                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(

@@ -33,6 +33,7 @@ class FooterBar {
     Color colorsHome,
     Color colorsLogin,
     Color colorsRegistration,
+    Color colorsLicense,
   ) {
     return BottomAppBar(
       elevation: 0,
@@ -52,6 +53,8 @@ class FooterBar {
               Icons.account_circle_outlined,
               colorsRegistration,
               '/user_registration'),
+          buttonFormDefault(context, "License", Icons.lightbulb_outline,
+              colorsLicense, '/license'),
           const SizedBox(height: 100),
         ],
       ),

@@ -50,7 +50,7 @@ class _UserEnterState extends State<UserEnter> {
         ),
       ),
       bottomNavigationBar: FooterBar.getLoginBar(
-          context, Colors.blue, Colors.brown, Colors.brown),
+          context, Colors.blue, Colors.brown, Colors.brown, Colors.brown),
     );
   }
 
