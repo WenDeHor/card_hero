@@ -18,10 +18,31 @@ class FooterBar {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           const SizedBox(height: 100),
-          buttonForm(context, "Mine menu", Icons.home_filled, colorsMineMenu),
-          buttonForm(context, "List friends", Icons.api, colorsListFriends),
-          buttonForm(context, "Stile app", Icons.add_chart, colorsStileApp),
-          buttonForm(context, "Details", Icons.adjust, colorsDetails),
+          buttonForm(context, "Mine menu", Icons.home_filled, colorsMineMenu, '/'),
+          buttonForm(context, "List friends", Icons.api, colorsListFriends, ''),
+          buttonForm(context, "Stile app", Icons.add_chart, colorsStileApp, ''),
+          buttonForm(context, "Details", Icons.adjust, colorsDetails, '/flip_card'),
+          const SizedBox(height: 100),
+        ],
+      ),
+    );
+  }
+
+  static Widget getEditUserInfoBar(
+      BuildContext context,
+      Color colorsFlipCard,
+      Color colorsListCard,
+      ) {
+    return BottomAppBar(
+      elevation: 0,
+      height: 70,
+      color: Colors.grey[200],
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const SizedBox(height: 100),
+          buttonForm(context, "Flip Card", Icons.image, colorsFlipCard, '/flip_card'),
+          buttonForm(context, "List Card", Icons.account_balance_wallet, colorsListCard, '/list_card'),
           const SizedBox(height: 100),
         ],
       ),
@@ -47,14 +68,8 @@ class FooterBar {
               context, "Home", Icons.home_filled, colorsHome, '/user_enter'),
           buttonFormDefault(
               context, "Login", Icons.camera, colorsLogin, '/user_login'),
-          buttonFormDefault(
-              context,
-              "Registration",
-              Icons.account_circle_outlined,
-              colorsRegistration,
-              '/user_registration'),
-          buttonFormDefault(context, "License", Icons.lightbulb_outline,
-              colorsLicense, '/license'),
+          buttonFormDefault(context,"Registration", Icons.account_circle_outlined, colorsRegistration,'/user_registration'),
+          buttonFormDefault(context, "License", Icons.lightbulb_outline, colorsLicense, '/license'),
           const SizedBox(height: 100),
         ],
       ),
@@ -88,13 +103,17 @@ class FooterBar {
   }
 
   static Column buttonForm(
-      BuildContext context, String name, IconData icon, Color color) {
+      BuildContext context,
+      String name,
+      IconData icon,
+      Color color,
+      String url) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         IconButton(
           onPressed: () {
-            pressedButton(context, name);
+            pressedButton(context, url);
           },
           icon: Icon(
             icon,
@@ -109,10 +128,14 @@ class FooterBar {
     );
   }
 
-  static void pressedButton(BuildContext context, String name) {
+  static void pressedButtonMock(BuildContext context, String name) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(name),
       backgroundColor: Colors.deepOrange[200],
     ));
+  }
+
+  static void pressedButton(BuildContext context, String url) {
+    Navigator.pushNamed(context, url);
   }
 }

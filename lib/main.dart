@@ -2,11 +2,12 @@ import 'package:card_hero/menu/1_1_enter.dart';
 import 'package:card_hero/menu/1_2_login.dart';
 import 'package:card_hero/menu/1_3_registration.dart';
 import 'package:card_hero/menu/1_4_license.dart';
+import 'package:card_hero/menu/3_2_edit_list_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'menu/2_mine_screan.dart';
-import 'menu/3_card_image_info.dart';
+import 'menu/3_1_edit_flip_card.dart';
 
 void main() async {
 
@@ -22,7 +23,8 @@ void main() async {
       '/user_login': (context) => const UserLogin(),
       '/user_registration': (context) => const UserRegistration(),
       '/license': (context) => const UserLicense(),
-      '/user_info': (context) => const UserInfo(),
+      '/flip_card': (context) => const EditUserFlipCard(),
+      '/list_card': (context) => const EditUserListCard(),
     },
   ));
 }

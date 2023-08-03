@@ -17,6 +17,8 @@ class User {
   final String? rating;
   final String? idDevice;
 
+
+
   User(
       {this.idSqlLite,
       this.idFirebase,
@@ -35,6 +37,9 @@ class User {
       this.lvl,
       this.rating,
       this.idDevice});
+
+
+
 
   @override
   bool operator ==(Object other) =>

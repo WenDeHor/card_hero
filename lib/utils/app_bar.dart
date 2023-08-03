@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 
 import 'dart:io' show Platform, exit;
 import 'package:flutter/services.dart';
-//import 'package:minimize_app/minimize_app.dart';
 
 import 'constants.dart';
 
@@ -16,7 +15,6 @@ class AppBarConstructor {
       backgroundColor: themeAppColor,
       automaticallyImplyLeading: false,
       actions: <Widget>[
-        getUserInfoWidget(context),
         getLoginMineWidget(context),
       ],
     );

@@ -44,6 +44,49 @@ class UserDatabase {
     }
   }
 
+  Future<void> insertOrUpdateIconInUser(String? icon) async {
+    Database db = await getDataBase();
+    int? count =
+    Sqflite.firstIntValue(await db.rawQuery("SELECT COUNT(*) FROM users"));
+    if (count != null && count >= 1) {
+      print("++++++UPDATE++++++++DB++++${icon}");
+      await db.rawUpdate(
+          "UPDATE users SET icon = '$icon' WHERE id_sql_lite='user'");
+    } else {
+      print("++++++INSERT++++++++DB++++${icon}");
+      await db.rawInsert(
+          "INSERT INTO users (id_sql_lite, icon) VALUES ('user', '$icon');");
+    }
+  }
+
+  Future<void> insertOrUpdateStatusSearch(String? status) async {
+    Database db = await getDataBase();
+    int? count =
+    Sqflite.firstIntValue(await db.rawQuery("SELECT COUNT(*) FROM users"));
+    if (count != null && count >= 1) {
+      print("++++++UPDATE++++++++DB++++${status}");
+      await db.rawUpdate(
+          "UPDATE users SET status_search = '$status' WHERE id_sql_lite='user'");
+    } else {
+      print("++++++INSERT++++++++DB++++${status}");
+      await db.rawInsert(
+          "INSERT INTO users (id_sql_lite, status_search) VALUES ('user', '$status');");
+    }
+  }
+
+  Future<void> insertOrUpdateUserName(String? name) async {
+    Database db = await getDataBase();
+    int? count =
+    Sqflite.firstIntValue(await db.rawQuery("SELECT COUNT(*) FROM users"));
+    if (count != null && count >= 1) {
+      await db.rawUpdate(
+          "UPDATE users SET name = '$name' WHERE id_sql_lite='user'");
+    } else {
+      await db.rawInsert(
+          "INSERT INTO users (id_sql_lite, name) VALUES ('user', '$name');");
+    }
+  }
+
   Future<void> insertUserRegistration(
     String phone,
     String password,
@@ -51,9 +94,9 @@ class UserDatabase {
   ) async {
     Database db = await getDataBase();
         print("++++++++++++++DB++++CREATE");
-    String sql =
-        "CREATE TABLE users (id_sql_lite TEXT, id_firebase TEXT, phone TEXT, password TEXT, stiles TEXT, longitude TEXT, latitude TEXT, language TEXT, icon TEXT, name TEXT, image TEXT, description_card TEXT, description_user TEXT, status_search TEXT, lvl TEXT, rating TEXT, id_device TEXT);";
-    await db.execute(sql);
+//    String sql =
+//        "CREATE TABLE users (id_sql_lite TEXT, id_firebase TEXT, phone TEXT, password TEXT, stiles TEXT, longitude TEXT, latitude TEXT, language TEXT, icon TEXT, name TEXT, image TEXT, description_card TEXT, description_user TEXT, status_search TEXT, lvl TEXT, rating TEXT, id_device TEXT);";
+//    await db.execute(sql);
     int? count =
         Sqflite.firstIntValue(await db.rawQuery("SELECT COUNT(*) FROM users"));
     if (count != null && count >= 1) {
@@ -70,20 +113,19 @@ class UserDatabase {
   }
 
 //TODO==========================================================>>>>>>
-  Future<void> insertOrUpdateUserCard(String phone, String name,
-      String descriptionCard, String password) async {
+  Future<void> insertOrUpdateUserFlipCard(String descriptionCard) async {
     Database db = await getDataBase();
     //db.rawDelete("DELETE FROM $tableName");
     int? count = Sqflite.firstIntValue(
         await db.rawQuery("SELECT COUNT(*) FROM $tableName"));
     if (count != null && count >= 1) {
       print(
-          "UPDATE phone = '$phone', password = '$password', name = '$name', description_card = '$descriptionCard'");
+          "UPDATE description_card = '$descriptionCard'");
       await db.rawUpdate(
-          "UPDATE users SET phone = '$phone', password = '$password', name = '$name', description_card = '$descriptionCard' WHERE id_sql_lite='user'");
+          "UPDATE users SET description_card = '$descriptionCard' WHERE id_sql_lite='user'");
     } else {
       await db.rawInsert(
-          "INSERT INTO users (id_sql_lite, phone, password, name, description_card) VALUES ('user','$phone', '$password', '$name', '$descriptionCard');");
+          "INSERT INTO users (id_sql_lite, description_card) VALUES ('user', '$descriptionCard');");
     }
   }
 
