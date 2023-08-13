@@ -36,16 +36,9 @@ class _DropdownUserGenderState extends State<DropdownUserGender> {
 
   @override
   Widget build(BuildContext context) {
-    String? dropdownValue;
-    if (_userList.isEmpty) {
-      dropdownValue = list.first;
-    } else {
-      if (_userList.first.icon!.isEmpty) {
-        dropdownValue = list.first;
-      } else {
-        dropdownValue = decodeGender(_userList.first.icon);
-      }
-    }
+    String? dropdownValue = _userList.isNotEmpty&&_userList[0].lvl != null
+        ? decodeGender(_userList.first.icon)
+        : list.first;
 
     return DropdownButton<String>(
       value: dropdownValue,

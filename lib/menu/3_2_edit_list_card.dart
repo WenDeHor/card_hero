@@ -91,8 +91,7 @@ class _EditUserListCardState extends State<EditUserListCard> {
           ),
         ),
       ),
-      bottomNavigationBar:
-      FooterBar.getEditUserInfoBar(context, Colors.brown, Colors.blue),
+      bottomNavigationBar: FooterBar.getEditUserInfoBar(context, Colors.brown, Colors.blue),
     );
   }
 
@@ -103,8 +102,7 @@ class _EditUserListCardState extends State<EditUserListCard> {
           padding: const EdgeInsets.fromLTRB(5, 5, 10, 0),
           child: Text(
             name,
-            style: const TextStyle(
-                color: Colors.black, fontSize: 20, fontStyle: FontStyle.normal),
+            style: const TextStyle(color: Colors.black, fontSize: 20, fontStyle: FontStyle.normal),
           ),
         ),
         widget
@@ -147,32 +145,43 @@ class _EditUserListCardState extends State<EditUserListCard> {
   }
 
   void updateUserStatus() {
-    if (_userList.isEmpty || _userList.first.statusSearch!.isEmpty) {
-      loadUserStatus = listUserStatus.first;
-    } else {
-      loadUserStatus = decodeStatus(_userList.first.statusSearch);
-    }
+    loadUserStatus = _userList.isNotEmpty && _userList[0].statusSearch != null
+        ? decodeStatus(_userList[0].statusSearch)
+        : listUserStatus.first;
   }
 
   void updateUserGender() async {
-    if (_userList.isEmpty
-        || _userList.first.icon!.isEmpty
-        || _userList.first.icon == "0"
-        || _userList.first.icon == null) {
-      //default value
-    } else if (_userList.first.icon == "1") {
+    _userList.isNotEmpty && _userList[0].icon != null
+        ? getIcon(_userList[0].icon)
+        : getDefaultIcon();
+  }
+
+  void getIcon(String? value) {
+    String val = value ?? "0";
+    int index = int.parse(val);
+    if (index == 0) {
+      getDefaultIcon();
+    } else if (index == 1) {
       userGender = const Icon(
-        Icons.account_circle,
+        Icons.man,
         size: 50,
-        color: Colors.greenAccent,
+        color: Colors.brown,
       );
-    } else {
+    } else if (index == 2) {
       userGender = const Icon(
-        Icons.account_circle_outlined,
+        Icons.woman,
         size: 50,
         color: Colors.deepOrangeAccent,
       );
     }
+  }
+
+  void getDefaultIcon() {
+    userGender = const Icon(
+      Icons.transgender,
+      size: 40,
+      color: Colors.grey,
+    );
   }
 
   Expanded userListInfo(String name, String status) {
@@ -235,26 +244,19 @@ class _EditUserListCardState extends State<EditUserListCard> {
       child: TextFormField(
         controller: _nameController,
         validator: (value) {
-          return validatorInput(
-              value, 3, 20, 'Enter please 3 to 20 characters');
+          return validatorInput(value, 3, 20, 'Enter please 3 to 20 characters');
         },
         decoration: InputDecoration(
             hintText: 'Enter your name',
-            hintStyle: const TextStyle(
-                color: Colors.grey, fontStyle: FontStyle.normal, fontSize: 15),
+            hintStyle: const TextStyle(color: Colors.grey, fontStyle: FontStyle.normal, fontSize: 15),
             labelText: labelNameText,
-            labelStyle: const TextStyle(
-                color: Colors.blueGrey,
-                fontStyle: FontStyle.normal,
-                fontSize: 20),
+            labelStyle: const TextStyle(color: Colors.blueGrey, fontStyle: FontStyle.normal, fontSize: 20),
             prefixIcon: const Icon(
               Icons.accessibility,
               color: Colors.blueGrey,
             ),
             errorStyle: const TextStyle(fontSize: 20.0),
-            border: const OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.red),
-                borderRadius: BorderRadius.all(Radius.circular(9.0)))),
+            border: const OutlineInputBorder(borderSide: BorderSide(color: Colors.red), borderRadius: BorderRadius.all(Radius.circular(9.0)))),
       ),
     );
   }
@@ -281,16 +283,14 @@ class _EditUserListCardState extends State<EditUserListCard> {
             ),
           ),
           onPressed: () {
-            if (_formKey.currentState!.validate() &&
-                labelNameText != _nameController.text) {
+            if (_formKey.currentState!.validate() && labelNameText != _nameController.text) {
               labelNameText = _nameController.text;
               userDatabase.insertOrUpdateUserName(_nameController.text);
               showSnackBarBySave();
               Navigator.pushNamed(context, '/list_card');
             }
           },
-          child: const Text('Save name',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0)),
+          child: const Text('Save name', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0)),
         ),
       ),
     );
@@ -311,15 +311,7 @@ class _EditUserListCardState extends State<EditUserListCard> {
   }
 
   String? decodeStatus(String? name) {
-    var genderIds = {
-      zero: resting,
-      one: lookingFriend,
-      two: searchLove,
-      three: wantPlay,
-      four: wantWalk,
-      five: walking,
-      six: work
-    };
+    var genderIds = {zero: resting, one: lookingFriend, two: searchLove, three: wantPlay, four: wantWalk, five: walking, six: work};
     return genderIds[name];
   }
 

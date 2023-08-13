@@ -32,11 +32,20 @@ var radiusBorderCardView = 0.0;
 var radiusImageCardView = 50.0;
 
 //resource
-var favorite = Icons.favorite;
-var imageColor_1 = const Color.fromARGB(240, 255, 0, 0);
-var star = Icons.star;
-var imageColor_2 =const Color.fromARGB(240, 255, 215, 0);
-var add_moderator = Icons.add_moderator;
-var imageColor_3 = const Color.fromARGB(240, 0, 128, 0);
-var add_box = Icons.add_box;
-var imageColor_4 = const Color.fromARGB(240, 255, 165, 0);
+var levelIcon = Icons.add_circle;
+var imageColor_1 = const Color.fromARGB(230, 255, 50, 0);
+var ratingIcon = Icons.wifi_protected_setup_outlined;
+var imageColor_2 =const Color.fromARGB(240, 255, 140, 0);
+var peopleInTheRadiusIcon = Icons.wc_outlined;
+var imageColor_3 = const Color.fromARGB(240, 200, 250, 0);
+var radiusIcon = Icons.wifi_tethering;
+var imageColor_4 = const Color.fromARGB(240, 55, 165, 0);
+
+TextStyle dataTextStyle= const TextStyle(
+    fontFamily: 'DeliciousHandrawn',
+    color: Colors.black,
+    fontStyle: FontStyle.italic,
+    fontSize: 40.0,
+    shadows: [Shadow(offset: Offset(2.0, 2.0), blurRadius: 6.0, color: Colors.blueGrey)],
+  );
+

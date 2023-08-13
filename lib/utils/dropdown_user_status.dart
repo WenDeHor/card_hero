@@ -54,16 +54,9 @@ class _DropdownUserStatusState extends State<DropdownUserStatus> {
 
   @override
   Widget build(BuildContext context) {
-    String? dropdownValue;
-    if (_userList.isEmpty) {
-      dropdownValue = list.first;
-    } else {
-      if (_userList.first.icon!.isEmpty) {
-        dropdownValue = list.first;
-      } else {
-        dropdownValue = decodeStatus(_userList.first.statusSearch);
-      }
-    }
+    String? dropdownValue = _userList.isNotEmpty&&_userList[0].lvl != null
+        ? decodeStatus(_userList.first.statusSearch)
+        : list.first;
 
     return DropdownButton<String>(
       value: dropdownValue,

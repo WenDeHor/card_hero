@@ -6,6 +6,21 @@
   String walking = 'I am walking';
   String work = 'I work';
 
+  String restingS = 'Vacation';
+  String lookingFriendS = 'Friendly';
+  String searchLoveS = 'Loving';
+  String wantPlayS = 'Playing';
+  String wantWalkS = 'Want Walk';
+  String walkingS = 'Walking';
+  String workS = 'Working';
+
+  String trainee = 'Trainee';
+  String rookie = 'Rookie';
+  String pro = 'Pro';
+  String expert = 'Expert';
+  String hero = 'Hero';
+  String legend = 'Legend';
+
   String zero = '0';
   String one = '1';
   String two = '2';

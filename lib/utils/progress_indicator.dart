@@ -25,11 +25,4 @@ class ProgressIndicatorUtils {
       ),
     );
   }
-
-//  int checkCurrentStep(int currentStep) {
-//    if(currentStep != null){
-//      return currentStep;
-//    }
-//    return currentStep != null ? currentStep : 20;
-//  }
 }

@@ -59,6 +59,21 @@ class UserDatabase {
     }
   }
 
+  Future<void> insertOrUpdateLevelInUser(String? level) async {
+    Database db = await getDataBase();
+    int? count =
+    Sqflite.firstIntValue(await db.rawQuery("SELECT COUNT(*) FROM users"));
+    if (count != null && count >= 1) {
+      print("++++++UPDATE++++++++DB++++${level}");
+      await db.rawUpdate(
+          "UPDATE users SET lvl = '$level' WHERE id_sql_lite='user'");
+    } else {
+      print("++++++INSERT++++++++DB++++${level}");
+      await db.rawInsert(
+          "INSERT INTO users (id_sql_lite, lvl) VALUES ('user', '$level');");
+    }
+  }
+
   Future<void> insertOrUpdateStatusSearch(String? status) async {
     Database db = await getDataBase();
     int? count =
@@ -108,7 +123,7 @@ class UserDatabase {
       print(
           "++++++INSERT+INTO++DB++++phone: $phone, password: $password, name: $name");
       await db.rawInsert(
-          "INSERT INTO users (id_sql_lite, phone, password, name) VALUES ('user','$phone', '$password', '$name');");
+          "INSERT INTO users (id_sql_lite, phone, password, name, lvl, rating) VALUES ('user','$phone', '$password', '$name', '0', '0' );");
     }
   }
 
