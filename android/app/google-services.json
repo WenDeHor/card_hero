@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "416191287848",
+    "firebase_url": "https://cardhero-baaf0-default-rtdb.firebaseio.com",
+    "project_id": "cardhero-baaf0",
+    "storage_bucket": "cardhero-baaf0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:416191287848:android:126c213fa7b8308c925b1d",
+        "android_client_info": {
+          "package_name": "com.example.card_hero"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "416191287848-gb9mf02ljb6uqluepi32enug2b3pnqlc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBwZzRWouGF6V6w1G07hWxHaU6U5thchpw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "416191287848-gb9mf02ljb6uqluepi32enug2b3pnqlc.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "416191287848-rgg0d68bse2fuqqsnvnk3btfghurbqev.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.cardHeroIOS"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
