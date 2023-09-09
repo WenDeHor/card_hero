@@ -18,51 +18,50 @@ class User {
   final String? idDevice;
 
 
+  User.name(this.idSqlLite, this.idFirebase, this.phone, this.password, this.stiles, this.longitude, this.latitude, this.language, this.icon,
+      this.name, this.image, this.descriptionCard, this.descriptionUser, this.statusSearch, this.lvl, this.rating, this.idDevice);
 
-  User(
-      {this.idSqlLite,
-      this.idFirebase,
-      this.phone,
-      this.password,
-      this.stiles,
-      this.longitude,
-      this.latitude,
-      this.language,
-      this.icon,
-      this.name,
-      this.image,
-      this.descriptionCard,
-      this.descriptionUser,
-      this.statusSearch,
-      this.lvl,
-      this.rating,
-      this.idDevice});
-
-
+  User({this.idSqlLite,
+    this.idFirebase,
+    this.phone,
+    this.password,
+    this.stiles,
+    this.longitude,
+    this.latitude,
+    this.language,
+    this.icon,
+    this.name,
+    this.image,
+    this.descriptionCard,
+    this.descriptionUser,
+    this.statusSearch,
+    this.lvl,
+    this.rating,
+    this.idDevice});
 
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is User &&
-          runtimeType == other.runtimeType &&
-          idSqlLite == other.idSqlLite &&
-          idFirebase == other.idFirebase &&
-          phone == other.phone &&
-          password == other.password &&
-          stiles == other.stiles &&
-          longitude == other.longitude &&
-          latitude == other.latitude &&
-          language == other.language &&
-          icon == other.icon &&
-          name == other.name &&
-          image == other.image &&
-          descriptionCard == other.descriptionCard &&
-          descriptionUser == other.descriptionUser &&
-          statusSearch == other.statusSearch &&
-          lvl == other.lvl &&
-          rating == other.rating &&
-          idDevice == other.idDevice;
+          other is User &&
+              runtimeType == other.runtimeType &&
+              idSqlLite == other.idSqlLite &&
+              idFirebase == other.idFirebase &&
+              phone == other.phone &&
+              password == other.password &&
+              stiles == other.stiles &&
+              longitude == other.longitude &&
+              latitude == other.latitude &&
+              language == other.language &&
+              icon == other.icon &&
+              name == other.name &&
+              image == other.image &&
+              descriptionCard == other.descriptionCard &&
+              descriptionUser == other.descriptionUser &&
+              statusSearch == other.statusSearch &&
+              lvl == other.lvl &&
+              rating == other.rating &&
+              idDevice == other.idDevice;
 
   @override
   int get hashCode =>

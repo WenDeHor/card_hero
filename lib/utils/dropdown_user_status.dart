@@ -68,7 +68,7 @@ class _DropdownUserStatusState extends State<DropdownUserStatus> {
       onChanged: (String? value) {
         userDatabase.insertOrUpdateStatusSearch(checkStatus(value!));
         setState(() {
-          dropdownValue = value!;
+          dropdownValue = value;
           Navigator.pushNamed(context, '/list_card');
         });
       },

@@ -50,7 +50,7 @@ class _DropdownUserGenderState extends State<DropdownUserGender> {
       onChanged: (String? value) {
         userDatabase.insertOrUpdateIconInUser(checkGender(value!));
         setState(() {
-          dropdownValue = value!;
+          dropdownValue = value;
           Navigator.pushNamed(context, '/list_card');
         });
       },

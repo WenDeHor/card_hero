@@ -56,7 +56,7 @@ class UserFlipCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(description!, textAlign: TextAlign.center, style: getTextStileTitle()),
+                Text(description, textAlign: TextAlign.center, style: getTextStileTitle()),
           ]),
         ),
       ),

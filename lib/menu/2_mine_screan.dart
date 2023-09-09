@@ -67,17 +67,17 @@ class HomeScreenState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    double width = (MediaQuery.of(context).size.width / 100) * 80;
-    double height = (MediaQuery.of(context).size.height / 100) * 55;
+//    double width = (MediaQuery.of(context).size.width / 100) * 80;
+//    double height = (MediaQuery.of(context).size.height / 100) * 55;
 
     int? radius = int.parse(userListGlobal.isNotEmpty && userListGlobal[0].lvl != null ? userListGlobal[0].lvl! : "0") * 10;
     String? status = userListGlobal.isNotEmpty && userListGlobal[0].statusSearch != null ? userListGlobal[0].statusSearch! : "0";
     String? level = userListGlobal.isNotEmpty && userListGlobal[0].lvl != null ? userListGlobal[0].lvl! : "0";
 
-    String? description = userListGlobal.isNotEmpty && userListGlobal[0].descriptionCard != null
-        ? userListGlobal[0].descriptionCard!
-        : "Describe your emotions associated with the photo";
-    Color cardColor = checkColors(level);
+//    String? description = userListGlobal.isNotEmpty && userListGlobal[0].descriptionCard != null
+//        ? userListGlobal[0].descriptionCard!
+//        : "Describe your emotions associated with the photo";
+//    Color cardColor = checkColors(level);
 
     return Scaffold(
       appBar: AppBarConstructor.mineAppBar(context),

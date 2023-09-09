@@ -19,7 +19,7 @@ class FooterBar {
         children: [
           const SizedBox(height: 100),
           buttonForm(context, "Mine menu", Icons.home_filled, colorsMineMenu, '/'),
-          buttonForm(context, "List friends", Icons.api, colorsListFriends, ''),
+          buttonForm(context, "Searcher", Icons.api, colorsListFriends, '/searcher'),
           buttonForm(context, "Stile app", Icons.add_chart, colorsStileApp, ''),
           buttonForm(context, "Details", Icons.adjust, colorsDetails, '/flip_card'),
           const SizedBox(height: 100),
