@@ -10,7 +10,9 @@ import 'package:card_hero/utils/image_and_name_from_list_user.dart';
 import 'package:card_hero/utils/image_picker.dart';
 import 'package:card_hero/utils/progress_indicator.dart';
 import 'package:card_hero/utils/user_status/constants_dropdown.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_flip_card/flutter_flip_card.dart';
 //import 'package:provider/provider.dart';
@@ -37,8 +39,6 @@ late UserDatabase userDatabase;
 final _model = SimpleCalcWidgetModel();
 //final _modelRating = RatingWidgetModel();
 
-
-
 class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
@@ -47,7 +47,6 @@ class MyApp extends StatefulWidget {
 }
 
 class HomeScreenState extends State<MyApp> {
-
   @override
   initState() {
     userDatabase = UserDatabase();
@@ -92,8 +91,9 @@ class HomeScreenState extends State<MyApp> {
               children: [
                 const UserFlipCard(),
                 const SizedBox(height: 10), //divider
-                const LevelScaleWidget(), //++++++--------
-                resourceWidget(level, status, 5000, radius)
+                const LevelScaleWidget(),
+                const SizedBox(height: 10), //divider//++++++--------
+               resourceWidget(level, status, 5000, radius),
               ], //
             ),
           ),
@@ -162,7 +162,7 @@ class HomeScreenState extends State<MyApp> {
     return Text(text, style: getTextStileTitle());
   }
 
-  Widget getLevelScaleWidget(BuildContext context){
+  Widget getLevelScaleWidget(BuildContext context) {
     final levelScaleCounter = ChangeNotifierProvider.watch<SimpleCalcWidgetModel>(context)?.ratingCounter ?? 10;
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -176,6 +176,8 @@ class HomeScreenState extends State<MyApp> {
   Widget resourceWidget(String val_1, String val_2, int val_3, int val_4) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      verticalDirection: VerticalDirection.down,
       children: [
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -339,5 +341,3 @@ class SimpleCalcWidgetModel extends ChangeNotifier {
     return (int.parse(value!) + incrementDelta).toString();
   }
 }
-
-

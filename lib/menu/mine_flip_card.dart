@@ -16,13 +16,13 @@ import '2_mine_screan.dart';
 late UserDatabase userDatabase;
 
 class UserFlipCard extends StatelessWidget {
-  const UserFlipCard( {Key? key}) : super(key: key);
+  const UserFlipCard({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final FlipCardController _controller = FlipCardController();
     double width = (MediaQuery.of(context).size.width / 100) * 80;
-    double height = (MediaQuery.of(context).size.height / 100) * 55;
+    double height = (MediaQuery.of(context).size.height / 100) * 60;
 
     String? description = userListGlobal.isNotEmpty && userListGlobal[0].descriptionCard != null
         ? userListGlobal[0].descriptionCard!
@@ -37,26 +37,22 @@ class UserFlipCard extends StatelessWidget {
         onTapFlipping: false,
         axis: FlipAxis.vertical,
         controller: _controller,
-        frontWidget: Container(
+        frontWidget: SizedBox(
           width: width,
           height: height,
           child: Stack(
             alignment: AlignmentDirectional.topStart,
             children: <Widget>[
-              getDefaultImage(userListGlobal),
-              getName(userListGlobal)
-            ],
+              getDefaultImage(userListGlobal, width, height),
+              getName(userListGlobal)],
           ),
         ),
         backWidget: Container(
           width: width,
           height: height,
           color: cardColor,
-          child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(description, textAlign: TextAlign.center, style: getTextStileTitle()),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.center, children: [
+            Text(description, textAlign: TextAlign.center, style: getTextStileTitle()),
           ]),
         ),
       ),
@@ -67,17 +63,19 @@ class UserFlipCard extends StatelessWidget {
     );
   }
 
-  Widget getUserImage(List<User> userList) {
+  Widget getUserImage(List<User> userList, double width, double height) {
     Uint8List path = base64.decode(userList[0].image!);
     return Column(
-      children: [Image.memory(path, fit: BoxFit.fill)],
+      children: [Image.memory(path, height: height, width: width, fit: BoxFit.fill)],
     );
   }
 
-  Widget getDefaultImage(List<User> userList) {
+  Widget getDefaultImage(List<User> userList, double width, double height) {
     return Column(
       children: [
-        userList.isNotEmpty && userList[0].image != null ? getUserImage(userList) : Image.asset('assets/cover23.jpg', fit: BoxFit.cover),
+        userList.isNotEmpty && userList[0].image != null
+            ? getUserImage(userList, width, height)
+            : Image.asset('assets/cover23.jpg', fit: BoxFit.cover),
 //          getName(userListGlobal)
       ],
     );
